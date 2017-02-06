@@ -5,4 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="anchor_point">300dp</dimen>
     <dimen name="bottom_sheet_peek_height">80dp</dimen>
+    <dimen name="bottom_sheet_shadow_height">6dp</dimen>
+    <dimen name="high_touch_slop">40dp</dimen>
+    <dimen name="min_distance_for_fling">12dp</dimen>
 </resources>

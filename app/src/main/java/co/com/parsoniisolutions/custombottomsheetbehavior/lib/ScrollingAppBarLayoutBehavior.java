@@ -12,15 +12,16 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.NestedScrollView;
+import android.support.v4.view.NestedScrollingParent;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+
 import java.lang.ref.WeakReference;
 
-import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 
 /**
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,9 +39,6 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.R;
  ~ https://github.com/miguelhincapie/CustomBottomSheetBehavior
  */
 
-/**
- *
- */
 public class ScrollingAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBehavior {
 
     private static final String TAG = ScrollingAppBarLayoutBehavior.class.getSimpleName();
@@ -50,7 +48,7 @@ public class ScrollingAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBeh
     private boolean mVisible = true;
     /**
      * To avoid using multiple "peekheight=" in XML and looking flexibility allowing {@link BottomSheetBehaviorGoogleMapsLike#mPeekHeight}
-     * get changed dynamically we get the {@link NestedScrollView} that has
+     * get changed dynamically we get the {@link NestedScrollingParent} that has
      * "app:layout_behavior=" {@link BottomSheetBehaviorGoogleMapsLike} inside the {@link CoordinatorLayout}
      */
     private WeakReference<BottomSheetBehaviorGoogleMapsLike> mBottomSheetBehaviorRef;
@@ -64,7 +62,7 @@ public class ScrollingAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBeh
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
-        if (dependency instanceof NestedScrollView) {
+        if ( dependency instanceof NestedScrollingParent ) {
             try {
                 BottomSheetBehaviorGoogleMapsLike.from(dependency);
                 return true;
@@ -188,12 +186,12 @@ public class ScrollingAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBeh
      * Look into the CoordiantorLayout for the {@link BottomSheetBehaviorGoogleMapsLike}
      * @param coordinatorLayout with app:layout_behavior= {@link BottomSheetBehaviorGoogleMapsLike}
      */
-    private void getBottomSheetBehavior(@NonNull CoordinatorLayout coordinatorLayout) {
+    private void getBottomSheetBehavior( @NonNull CoordinatorLayout coordinatorLayout ) {
 
-        for (int i = 0; i < coordinatorLayout.getChildCount(); i++) {
+        for ( int i = 0; i < coordinatorLayout.getChildCount(); i++ ) {
             View child = coordinatorLayout.getChildAt(i);
 
-            if (child instanceof NestedScrollView) {
+            if ( child instanceof NestedScrollingParent ) {
 
                 try {
                     BottomSheetBehaviorGoogleMapsLike temp = BottomSheetBehaviorGoogleMapsLike.from(child);

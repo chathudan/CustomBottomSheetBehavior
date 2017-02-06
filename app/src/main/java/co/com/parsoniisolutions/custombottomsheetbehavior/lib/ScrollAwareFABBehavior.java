@@ -5,8 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SlopSupportingNestedScrollView;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -154,7 +156,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
         for (int i = 0; i < coordinatorLayout.getChildCount(); i++) {
             View child = coordinatorLayout.getChildAt(i);
 
-            if (child instanceof NestedScrollView) {
+            if ( child instanceof NestedScrollingParent ) {
 
                 try {
                     BottomSheetBehaviorGoogleMapsLike temp = BottomSheetBehaviorGoogleMapsLike.from(child);

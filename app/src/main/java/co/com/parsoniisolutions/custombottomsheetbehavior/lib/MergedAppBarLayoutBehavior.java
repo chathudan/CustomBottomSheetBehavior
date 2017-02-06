@@ -13,7 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.NestedScrollView;
+import android.support.v4.view.NestedScrollingParent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +30,8 @@ import android.widget.TextView;
 import java.lang.ref.WeakReference;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+
+
 /**
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -60,7 +62,7 @@ public class MergedAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBehavi
     private Context mContext;
     /**
      * To avoid using multiple "peekheight=" in XML and looking flexibility allowing {@link BottomSheetBehaviorGoogleMapsLike#mPeekHeight}
-     * get changed dynamically we get the {@link NestedScrollView} that has
+     * get changed dynamically we get the {@link NestedScrollingParent} that has
      * "app:layout_behavior=" {@link BottomSheetBehaviorGoogleMapsLike} inside the {@link CoordinatorLayout}
      */
     private WeakReference<BottomSheetBehaviorGoogleMapsLike> mBottomSheetBehaviorRef;
@@ -84,7 +86,7 @@ public class MergedAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBehavi
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
-        if (dependency instanceof NestedScrollView) {
+        if ( dependency instanceof NestedScrollingParent ) {
             try {
                 BottomSheetBehaviorGoogleMapsLike.from(dependency);
                 return true;
@@ -176,7 +178,7 @@ public class MergedAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBehavi
         for (int i = 0; i < coordinatorLayout.getChildCount(); i++) {
             View child = coordinatorLayout.getChildAt(i);
 
-            if (child instanceof NestedScrollView) {
+            if ( child instanceof NestedScrollingParent ) {
 
                 try {
                     BottomSheetBehaviorGoogleMapsLike temp = BottomSheetBehaviorGoogleMapsLike.from(child);
@@ -212,9 +214,20 @@ public class MergedAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBehavi
         return dependency.getY() == 0;
     }
 
-    private void setPartialBackGroundHeight(int height){
-        mBackGroundLayoutParams.height = height;
-        mBackground.setLayoutParams(mBackGroundLayoutParams);
+    private int mBottomSheetShadowHeight = -1;
+    public int getBottomSheetShadowHeight() {
+        if ( mBottomSheetShadowHeight == -1 ) {
+            mBottomSheetShadowHeight = (int) mBackground.getContext().getResources().getDimension( R.dimen.bottom_sheet_shadow_height );
+        }
+        return mBottomSheetShadowHeight;
+    }
+
+    private void setPartialBackGroundHeight( int height ) {
+        int newHeight = Math.max(0, height - getBottomSheetShadowHeight() ); // Compensates for shadow above peeking bar
+        if ( mBackGroundLayoutParams.height != newHeight ) {
+            mBackGroundLayoutParams.height = newHeight;
+            mBackground.setLayoutParams( mBackGroundLayoutParams ); // This forces layout, so only do it if height actually changed
+        }
     }
 
     private void setFullBackGroundColor(@ColorRes int colorRes){
