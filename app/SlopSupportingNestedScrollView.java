@@ -1,3 +1,4 @@
+// Needs to be in android.support.v4.widget to access package local methods
 package android.support.v4.widget;
 
 import android.content.Context;
@@ -21,6 +22,8 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v4.view.accessibility.AccessibilityRecordCompat;
+import android.support.v4.widget.EdgeEffectCompat;
+import android.support.v4.widget.ScrollerCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -45,7 +48,23 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 
 /**
- * NestedScrollView is just like {@link android.widget.ScrollView}, but it supports acting
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~ you may not use this file except in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~      http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing, software
+ ~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~ See the License for the specific language governing permissions and
+ ~ limitations under the License.
+ ~
+ ~ https://github.com/miguelhincapie/CustomBottomSheetBehavior
+ */
+
+/**
+ * NestedScrollView is just like {@link ScrollView}, but it supports acting
  * as both a nested scrolling parent and child on both new and old versions of Android.
  * Nested scrolling is enabled by default.
  */
@@ -63,7 +82,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
      *
      * <p>This version of the interface works on all versions of Android, back to API v4.</p>
      *
-     * @see #setOnScrollChangeListener(android.support.v4.widget.SlopSupportingNestedScrollView.OnScrollChangeListener)
+     * @see #setOnScrollChangeListener(OnScrollChangeListener)
      */
     public interface OnScrollChangeListener {
         /**
@@ -75,8 +94,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
          * @param oldScrollX Previous horizontal scroll origin.
          * @param oldScrollY Previous vertical scroll origin.
          */
-        void onScrollChange( android.support.v4.widget.SlopSupportingNestedScrollView v, int scrollX, int scrollY,
-                int oldScrollX, int oldScrollY);
+        void onScrollChange( SlopSupportingNestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY );
     }
 
     private long mLastScroll;
@@ -90,7 +108,6 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
      * Position of the last motion event.
      */
     private int mLastMotionY;
-    private int mLastMotionX;
 
     /**
      * True when the layout has changed but the traversal has not come through yet.
@@ -129,13 +146,12 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
      */
     private boolean mSmoothScrollingEnabled = true;
 
-    private boolean applyHighTouchSlop = false;
-    public void setApplyHighTouchSlop( boolean applyHighTouchSlop ) {
-        this.applyHighTouchSlop = applyHighTouchSlop;
+    private boolean applyTouchSlop = true;
+    public void setApplyTouchSlop( boolean applyTouchSlop ) {
+        this.applyTouchSlop = applyTouchSlop;
     }
     private int mLowTouchSlop;
     private int mHighTouchSlop;
-    private int touchSlop() { return applyHighTouchSlop ? mHighTouchSlop : mLowTouchSlop; }
 
     private int mMinimumVelocity;
     private int mMaximumVelocity;
@@ -159,9 +175,9 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
      */
     private static final int INVALID_POINTER = -1;
 
-    private android.support.v4.widget.SlopSupportingNestedScrollView.SavedState mSavedState;
+    private SavedState mSavedState;
 
-    private static final android.support.v4.widget.SlopSupportingNestedScrollView.AccessibilityDelegate ACCESSIBILITY_DELEGATE = new android.support.v4.widget.SlopSupportingNestedScrollView.AccessibilityDelegate();
+    private static final AccessibilityDelegate ACCESSIBILITY_DELEGATE = new AccessibilityDelegate();
 
     private static final int[] SCROLLVIEW_STYLEABLE = new int[] {
             android.R.attr.fillViewport
@@ -172,7 +188,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
 
     private float mVerticalScrollFactor;
 
-    private android.support.v4.widget.SlopSupportingNestedScrollView.OnScrollChangeListener mOnScrollChangeListener;
+    private OnScrollChangeListener mOnScrollChangeListener;
 
     public SlopSupportingNestedScrollView(Context context) {
         this(context, null);
@@ -230,10 +246,8 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
     }
 
     @Override
-    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
-            int dyUnconsumed, int[] offsetInWindow) {
-        return mChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
-                offsetInWindow);
+    public boolean dispatchNestedScroll( int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow ) {
+        return mChildHelper.dispatchNestedScroll( dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow );
     }
 
     @Override
@@ -261,7 +275,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
     @Override
     public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
         mParentHelper.onNestedScrollAccepted(child, target, nestedScrollAxes);
-        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+        startNestedScroll( ViewCompat.SCROLL_AXIS_VERTICAL);
     }
 
     @Override
@@ -271,13 +285,13 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
     }
 
     @Override
-    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
-            int dyUnconsumed) {
+    public void onNestedScroll( View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed ) {
         final int oldScrollY = getScrollY();
         scrollBy(0, dyUnconsumed);
         final int myConsumed = getScrollY() - oldScrollY;
         final int myUnconsumed = dyUnconsumed - myConsumed;
-        dispatchNestedScroll(0, myConsumed, 0, myUnconsumed, null);
+
+        dispatchNestedScroll( 0, myConsumed, 0, myUnconsumed, null );
     }
 
     @Override
@@ -352,13 +366,11 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
     private void initScrollView() {
         mScroller = ScrollerCompat.create(getContext(), null);
         setFocusable(true);
-        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+        setDescendantFocusability( FOCUS_AFTER_DESCENDANTS );
         setWillNotDraw(false);
         final ViewConfiguration configuration = ViewConfiguration.get(getContext());
-
         mLowTouchSlop  = configuration.getScaledTouchSlop();
         mHighTouchSlop = (int)getContext().getResources().getDimension( R.dimen.high_touch_slop );
-
         mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
     }
@@ -405,10 +417,10 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
      * <p>This version of the method works on all versions of Android, back to API v4.</p>
      *
      * @param l The listener to notify when the scroll X or Y position changes.
-     * @see android.view.View#getScrollX()
-     * @see android.view.View#getScrollY()
+     * @see View#getScrollX()
+     * @see View#getScrollY()
      */
-    public void setOnScrollChangeListener( android.support.v4.widget.SlopSupportingNestedScrollView.OnScrollChangeListener l) {
+    public void setOnScrollChangeListener(OnScrollChangeListener l) {
         mOnScrollChangeListener = l;
     }
 
@@ -491,7 +503,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
             final View child = getChildAt(0);
             int height = getMeasuredHeight();
             if (child.getMeasuredHeight() < height) {
-                final FrameLayout.LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
                 int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
                         getPaddingLeft() + getPaddingRight(), lp.width);
@@ -565,6 +577,12 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
         if (getChildCount() > 0) {
             final int scrollY = getScrollY();
             final View child = getChildAt(0);
+
+            int top    = child.getTop();
+            int left   = child.getLeft();
+            int right  = child.getRight();
+            int bottom = child.getBottom();
+
             return !(y < child.getTop() - scrollY
                     || y >= child.getBottom() - scrollY
                     || x < child.getLeft()
@@ -595,13 +613,21 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
     }
 
     @Override
-    public void requestDisallowInterceptTouchEvent( boolean disallowIntercept ) {
-        if ( disallowIntercept ) {
+    public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        if (disallowIntercept) {
             recycleVelocityTracker();
         }
-        super.requestDisallowInterceptTouchEvent( disallowIntercept );
+        super.requestDisallowInterceptTouchEvent(disallowIntercept);
     }
 
+    private int getTouchSlop() {
+        if ( applyTouchSlop ) {
+            return mHighTouchSlop;
+        }
+        else {
+            return mLowTouchSlop;
+        }
+    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -617,9 +643,6 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
         * motion.
         */
         final int action = ev.getAction();
-        //if ( action == MotionEvent.ACTION_MOVE ) {
-        //    return true;
-        //}
         if ((action == MotionEvent.ACTION_MOVE) && (mIsBeingDragged)) {
             return true;
         }
@@ -650,7 +673,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
 
                 final int y = (int) ev.getY(pointerIndex);
                 final int yDiff = Math.abs(y - mLastMotionY);
-                if (yDiff > touchSlop()
+                if (yDiff > getTouchSlop()
                         && (getNestedScrollAxes() & ViewCompat.SCROLL_AXIS_VERTICAL) == 0) {
                     mIsBeingDragged = true;
                     mLastMotionY = y;
@@ -667,7 +690,6 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
 
             case MotionEvent.ACTION_DOWN: {
                 final int y = (int) ev.getY();
-                final int x = (int) ev.getX();
                 if (!inChild((int) ev.getX(), (int) y)) {
                     mIsBeingDragged = false;
                     recycleVelocityTracker();
@@ -679,7 +701,6 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
                  * ACTION_DOWN always refers to pointer index 0.
                  */
                 mLastMotionY = y;
-                mLastMotionX = x;
                 mActivePointerId = ev.getPointerId(0);
 
                 initOrResetVelocityTracker();
@@ -692,7 +713,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
                 */
                 mScroller.computeScrollOffset();
                 mIsBeingDragged = !mScroller.isFinished();
-                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+                startNestedScroll( ViewCompat.SCROLL_AXIS_VERTICAL);
                 break;
             }
 
@@ -721,9 +742,11 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        Log.e("e","Slop supporting on touch event");
+
         initVelocityTrackerIfNotExists();
 
-        MotionEvent vtev = MotionEvent.obtain(ev);
+        MotionEvent vtev = MotionEvent.obtain( ev );
 
         final int actionMasked = MotionEventCompat.getActionMasked(ev);
 
@@ -754,9 +777,8 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
 
                 // Remember where the motion event started
                 mLastMotionY = (int) ev.getY();
-                mLastMotionX = (int) ev.getX();
                 mActivePointerId = ev.getPointerId(0);
-                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+                startNestedScroll( ViewCompat.SCROLL_AXIS_VERTICAL);
                 break;
             }
             case MotionEvent.ACTION_MOVE:
@@ -769,42 +791,37 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
                 final int y = (int) ev.getY(activePointerIndex);
                 int deltaY = mLastMotionY - y;
 
-                final int x = (int) ev.getX(activePointerIndex);
-                int deltaX = mLastMotionX - x;
-
-                // Are we in pre-slop zone, and dragging up?
-                if ( ! mIsBeingDragged ) {
-                    final ViewParent parent = getParent();
-                    if ( parent != null ) {
-                        if ( Math.abs(deltaY) > Math.abs(deltaX) ) {
-                            parent.requestDisallowInterceptTouchEvent( true );
-                        }
-                        else {
-                            parent.requestDisallowInterceptTouchEvent( false );
-                        }
+                if ( mIsBeingDragged ) {
+                    if ( dispatchNestedPreScroll( 0, deltaY, mScrollConsumed, mScrollOffset ) ) { // added mIsBeingDragged check here
+                        deltaY -= mScrollConsumed[1];
+                        vtev.offsetLocation( 0, mScrollOffset[1] );
+                        mNestedYOffset += mScrollOffset[1];
                     }
                 }
+                else {
+                    //if ( dispatchNestedPreScroll( 0, deltaY, mScrollConsumed, mScrollOffset ) ) { // added mIsBeingDragged check here
+                        //deltaY -= mScrollConsumed[1];
+                        //vtev.offsetLocation( 0, deltaY );
+                        //mNestedYOffset += mScrollOffset[1];
+                    //}
+                }
 
-                if ( ! mIsBeingDragged  &&  Math.abs(deltaY) > touchSlop() ) {
+                boolean startDragAfterSlop = false;
+                if ( ! mIsBeingDragged  &&  Math.abs(deltaY) > getTouchSlop() ) {
                     final ViewParent parent = getParent();
-                    if ( parent != null ) {
-                        parent.requestDisallowInterceptTouchEvent( true );
+                    if (parent != null) {
+                        parent.requestDisallowInterceptTouchEvent(true);
                     }
                     mIsBeingDragged = true;
-                    if ( deltaY > 0 ) {
-                        deltaY -= touchSlop();
+                    startDragAfterSlop = true;
+                    if (deltaY > 0) {
+                        //deltaY -= getTouchSlop();
                     } else {
-                        deltaY += touchSlop();
+                        //deltaY += getTouchSlop();
                     }
+                    Log.e("e","Start drag after slop");
                 }
-
-                if ( mIsBeingDragged  &&  dispatchNestedPreScroll( 0, deltaY, mScrollConsumed, mScrollOffset ) ) {
-                    deltaY -= mScrollConsumed[1];
-                    vtev.offsetLocation(0, mScrollOffset[1]);
-                    mNestedYOffset += mScrollOffset[1];
-                }
-
-                if (mIsBeingDragged) {
+                if ( mIsBeingDragged ) {
                     // Scroll to follow the motion event
                     mLastMotionY = y - mScrollOffset[1];
 
@@ -823,12 +840,17 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
                     }
 
                     final int scrolledDeltaY = getScrollY() - oldY;
-                    final int unconsumedY = deltaY - scrolledDeltaY;
-                    if (dispatchNestedScroll(0, scrolledDeltaY, 0, unconsumedY, mScrollOffset)) {
+                    int unconsumedY = deltaY - scrolledDeltaY;
+                    if ( startDragAfterSlop ) {
+                        //unconsumedY = 0; // Consume all of the scroll
+                    }
+                    if ( dispatchNestedScroll( 0, scrolledDeltaY, 0, unconsumedY, mScrollOffset ) ) {
                         mLastMotionY -= mScrollOffset[1];
                         vtev.offsetLocation(0, mScrollOffset[1]);
                         mNestedYOffset += mScrollOffset[1];
-                    } else if (canOverscroll) {
+                    }
+                    else
+                    if ( canOverscroll ) {
                         ensureGlows();
                         final int pulledToY = oldY + deltaY;
                         if (pulledToY < 0) {
@@ -878,6 +900,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
                 }
                 mActivePointerId = INVALID_POINTER;
                 endDrag();
+
                 break;
             case MotionEventCompat.ACTION_POINTER_DOWN: {
                 final int index = MotionEventCompat.getActionIndex(ev);
@@ -888,7 +911,6 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
             case MotionEventCompat.ACTION_POINTER_UP:
                 onSecondaryPointerUp(ev);
                 mLastMotionY = (int) ev.getY(ev.findPointerIndex(mActivePointerId));
-                mLastMotionX = (int) ev.getX(ev.findPointerIndex(mActivePointerId));
                 break;
         }
 
@@ -1122,9 +1144,9 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
      * component is a good candidate for focus, this scrollview reclaims the
      * focus.</p>
      *
-     * @param direction the scroll direction: {@link android.view.View#FOCUS_UP}
+     * @param direction the scroll direction: {@link View#FOCUS_UP}
      *                  to go one page up or
-     *                  {@link android.view.View#FOCUS_DOWN} to go one page down
+     *                  {@link View#FOCUS_DOWN} to go one page down
      * @return true if the key event is consumed by this method, false otherwise
      */
     public boolean pageScroll(int direction) {
@@ -1158,9 +1180,9 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
      * component is a good candidate for focus, this scrollview reclaims the
      * focus.</p>
      *
-     * @param direction the scroll direction: {@link android.view.View#FOCUS_UP}
+     * @param direction the scroll direction: {@link View#FOCUS_UP}
      *                  to go the top of the view or
-     *                  {@link android.view.View#FOCUS_DOWN} to go the bottom
+     *                  {@link View#FOCUS_DOWN} to go the bottom
      * @return true if the key event is consumed by this method, false otherwise
      */
     public boolean fullScroll(int direction) {
@@ -1188,8 +1210,8 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
      * to a component visible in this area. If no component can be focused in
      * the new visible area, the focus is reclaimed by this ScrollView.</p>
      *
-     * @param direction the scroll direction: {@link android.view.View#FOCUS_UP}
-     *                  to go upward, {@link android.view.View#FOCUS_DOWN} to downward
+     * @param direction the scroll direction: {@link View#FOCUS_UP}
+     *                  to go upward, {@link View#FOCUS_DOWN} to downward
      * @param top       the top offset of the new area to be made visible
      * @param bottom    the bottom offset of the new area to be made visible
      * @return true if the key event is consumed by this method, false otherwise
@@ -1593,7 +1615,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
      * When looking for focus in children of a scroll view, need to be a little
      * more careful not to give focus to something that is scrolled off screen.
      *
-     * This is more expensive than the default {@link android.view.ViewGroup}
+     * This is more expensive than the default {@link ViewGroup}
      * implementation, otherwise this behavior might have been made the default.
      */
     @Override
@@ -1851,12 +1873,12 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        if (!(state instanceof android.support.v4.widget.SlopSupportingNestedScrollView.SavedState)) {
+        if (!(state instanceof SavedState)) {
             super.onRestoreInstanceState(state);
             return;
         }
 
-        android.support.v4.widget.SlopSupportingNestedScrollView.SavedState ss = (android.support.v4.widget.SlopSupportingNestedScrollView.SavedState) state;
+        SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
         mSavedState = ss;
         requestLayout();
@@ -1865,7 +1887,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable superState = super.onSaveInstanceState();
-        android.support.v4.widget.SlopSupportingNestedScrollView.SavedState ss = new android.support.v4.widget.SlopSupportingNestedScrollView.SavedState(superState);
+        SavedState ss = new SavedState(superState);
         ss.scrollPosition = getScrollY();
         return ss;
     }
@@ -1895,16 +1917,16 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
                     + " scrollPosition=" + scrollPosition + "}";
         }
 
-        public static final Parcelable.Creator<android.support.v4.widget.SlopSupportingNestedScrollView.SavedState> CREATOR =
-                new Parcelable.Creator<android.support.v4.widget.SlopSupportingNestedScrollView.SavedState>() {
+        public static final Creator<SavedState> CREATOR =
+                new Creator<SavedState>() {
                     @Override
-                    public android.support.v4.widget.SlopSupportingNestedScrollView.SavedState createFromParcel(Parcel in) {
-                        return new android.support.v4.widget.SlopSupportingNestedScrollView.SavedState(in);
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
                     }
 
                     @Override
-                    public android.support.v4.widget.SlopSupportingNestedScrollView.SavedState[] newArray(int size) {
-                        return new android.support.v4.widget.SlopSupportingNestedScrollView.SavedState[size];
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
                     }
                 };
     }
@@ -1915,7 +1937,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
             if (super.performAccessibilityAction(host, action, arguments)) {
                 return true;
             }
-            final android.support.v4.widget.SlopSupportingNestedScrollView nsvHost = (android.support.v4.widget.SlopSupportingNestedScrollView) host;
+            final SlopSupportingNestedScrollView nsvHost = (SlopSupportingNestedScrollView) host;
             if (!nsvHost.isEnabled()) {
                 return false;
             }
@@ -1948,17 +1970,17 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
         @Override
         public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
             super.onInitializeAccessibilityNodeInfo(host, info);
-            final android.support.v4.widget.SlopSupportingNestedScrollView nsvHost = (android.support.v4.widget.SlopSupportingNestedScrollView) host;
+            final SlopSupportingNestedScrollView nsvHost = (SlopSupportingNestedScrollView) host;
             info.setClassName(ScrollView.class.getName());
             if (nsvHost.isEnabled()) {
                 final int scrollRange = nsvHost.getScrollRange();
                 if (scrollRange > 0) {
                     info.setScrollable(true);
                     if (nsvHost.getScrollY() > 0) {
-                        info.addAction(AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD);
+                        info.addAction( AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD);
                     }
                     if (nsvHost.getScrollY() < scrollRange) {
-                        info.addAction(AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD);
+                        info.addAction( AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD);
                     }
                 }
             }
@@ -1967,7 +1989,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
         @Override
         public void onInitializeAccessibilityEvent(View host, AccessibilityEvent event) {
             super.onInitializeAccessibilityEvent(host, event);
-            final android.support.v4.widget.SlopSupportingNestedScrollView nsvHost = (android.support.v4.widget.SlopSupportingNestedScrollView) host;
+            final SlopSupportingNestedScrollView nsvHost = (SlopSupportingNestedScrollView) host;
             event.setClassName(ScrollView.class.getName());
             final AccessibilityRecordCompat record = AccessibilityEventCompat.asRecord(event);
             final boolean scrollable = nsvHost.getScrollRange() > 0;
@@ -1979,4 +2001,3 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
         }
     }
 }
-

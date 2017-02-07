@@ -3,9 +3,12 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="fab_size_half">28dp</dimen>
     <dimen name="anchor_point">300dp</dimen>
     <dimen name="bottom_sheet_peek_height">80dp</dimen>
     <dimen name="bottom_sheet_shadow_height">6dp</dimen> <!-- The height of the shadow above the bottom sheet -->
-    <dimen name="high_touch_slop">40dp</dimen>            <!-- The amount of touch slop when the bottom sheet is collapsed or at anchor state -->
-    <dimen name="min_distance_for_fling">12dp</dimen>     <!-- Drag threshold to consider gesture a fling -->
+    <dimen name="high_touch_slop">60dp</dimen>            <!-- The amount of touch slop when the bottom sheet is collapsed or at anchor state -->
+    <dimen name="min_distance_for_fling">4dp</dimen>     <!-- Drag threshold to consider a gesture a fling -->
+    <dimen name="merged_toolbar_hide_threshold">12dp</dimen> <!-- The amount by which we can scroll away from anchor state before the merged toolbar hides -->
 </resources>

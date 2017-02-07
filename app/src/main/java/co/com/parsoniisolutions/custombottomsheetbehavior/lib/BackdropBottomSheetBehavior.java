@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * This class will link the Backdrop element (that can be anything extending View) with a
- * NestedScrollingParent (the dependency). Whenever dependency is moved, the backdrop will be moved too
+ * NestedScrollView (the dependency). Whenever dependecy is moved, the backdrop will be moved too
  * behaving like parallax effect.
  *
  * The backdrop need to be <bold>into</bold> a CoordinatorLayout and <bold>before</bold>
@@ -54,76 +54,70 @@ public class BackdropBottomSheetBehavior<V extends View> extends CoordinatorLayo
     }
 
     @Override
-    public boolean layoutDependsOn( CoordinatorLayout parent, View child, View dependency ) {
+    public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
         if ( dependency instanceof NestedScrollingParent ) {
             try {
-                BottomSheetBehaviorGoogleMapsLike.from( dependency );
+                BottomSheetBehaviorGoogleMapsLike.from(dependency);
                 return true;
             }
-            catch ( IllegalArgumentException e ) { }
+            catch (IllegalArgumentException e){}
         }
         return false;
     }
 
     @Override
-    public boolean onDependentViewChanged( CoordinatorLayout parent, View child, View dependency ) {
-
+    public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
         /**
-         * collapsedY and anchorPointY are calculated every time looking for
+         * collapsedY and achorPointY are calculated every time looking for
          * flexibility, in case that dependency's height, child's height or {@link BottomSheetBehaviorGoogleMapsLike#getPeekHeight()}'s
-         * value changes throughout the time, I mean, you can have a {@link android.widget.ImageView}
+         * value changes throught the time, I mean, you can have a {@link android.widget.ImageView}
          * using images with different sizes and you don't want to resize them or so
          */
-        if ( mBottomSheetBehaviorRef == null  ||  mBottomSheetBehaviorRef.get() == null )
-            getBottomSheetBehavior( parent );
-
+        if (mBottomSheetBehaviorRef == null || mBottomSheetBehaviorRef.get() == null)
+            getBottomSheetBehavior(parent);
         /**
          * mCollapsedY: Y position in where backdrop get hidden behind dependency.
          * {@link BottomSheetBehaviorGoogleMapsLike#getPeekHeight()} and collapsedY are the same point on screen.
          */
         int collapsedY = dependency.getHeight() - mBottomSheetBehaviorRef.get().getPeekHeight();
-
         /**
-         * anchorPointY: with top being Y=0, anchorPointY defines the point in Y where could
+         * achorPointY: with top being Y=0, achorPointY defines the point in Y where could
          * happen 2 things:
          * The backdrop should be moved behind dependency view (when {@link #mCurrentChildY} got
          * positive values) or the dependency view overlaps the backdrop (when
          * {@link #mCurrentChildY} got negative values)
          */
-        int anchorPointY = child.getHeight();
-
+        int achorPointY = child.getHeight();
         /**
          * lastCurrentChildY: Just to know if we need to return true or false at the end of this
-         * method. We return true if we change the layout of the child view here.
+         * method.
          */
         int lastCurrentChildY = mCurrentChildY;
 
-        if ( ( mCurrentChildY = (int) ((dependency.getY()-anchorPointY) * collapsedY / (collapsedY-anchorPointY))) <= 0 ) {
-            child.setY( mCurrentChildY = 0 );
-        }
-        else {
-            child.setY( mCurrentChildY );
-        }
-
-        return ( lastCurrentChildY != mCurrentChildY );
+        if((mCurrentChildY = (int) ((dependency.getY()-achorPointY) * collapsedY / (collapsedY-achorPointY))) <= 0)
+            child.setY(mCurrentChildY = 0);
+        else
+            child.setY(mCurrentChildY);
+        return (lastCurrentChildY == mCurrentChildY);
     }
 
     /**
-     * Look into the CoordinatorLayout for the {@link BottomSheetBehaviorGoogleMapsLike}
+     * Look into the CoordiantorLayout for the {@link BottomSheetBehaviorGoogleMapsLike}
      * @param coordinatorLayout with app:layout_behavior= {@link BottomSheetBehaviorGoogleMapsLike}
      */
-    private void getBottomSheetBehavior( @NonNull CoordinatorLayout coordinatorLayout ) {
+    private void getBottomSheetBehavior(@NonNull CoordinatorLayout coordinatorLayout) {
 
-        for ( int i = 0; i < coordinatorLayout.getChildCount(); i++ ) {
-            View child = coordinatorLayout.getChildAt( i );
+        for (int i = 0; i < coordinatorLayout.getChildCount(); i++) {
+            View child = coordinatorLayout.getChildAt(i);
 
             if ( child instanceof NestedScrollingParent ) {
+
                 try {
-                    BottomSheetBehaviorGoogleMapsLike temp = BottomSheetBehaviorGoogleMapsLike.from( child );
-                    mBottomSheetBehaviorRef = new WeakReference<>( temp );
+                    BottomSheetBehaviorGoogleMapsLike temp = BottomSheetBehaviorGoogleMapsLike.from(child);
+                    mBottomSheetBehaviorRef = new WeakReference<>(temp);
                     break;
                 }
-                catch ( IllegalArgumentException e ) { }
+                catch (IllegalArgumentException e){}
             }
         }
     }

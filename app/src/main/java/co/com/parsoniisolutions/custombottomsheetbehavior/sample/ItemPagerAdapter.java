@@ -33,7 +33,7 @@ public class ItemPagerAdapter extends android.support.v4.view.PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        View itemView = mLayoutInflater.inflate(R.layout.pager_item, container, false);
+        View itemView = mLayoutInflater.inflate(R.layout.photo_pager_item, container, false);
         ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
         imageView.setImageResource(mItems[position]);
         container.addView(itemView);

@@ -7,7 +7,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SlopSupportingNestedScrollView;
 import android.util.AttributeSet;
 import android.view.View;
@@ -63,7 +62,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
-        if (dependency instanceof NestedScrollView) {
+        if (dependency instanceof SlopSupportingNestedScrollView ) {
             try {
                 BottomSheetBehaviorGoogleMapsLike.from(dependency);
                 return true;

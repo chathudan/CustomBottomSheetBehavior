@@ -13,6 +13,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SlopSupportingNestedScrollView;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -24,24 +25,10 @@ import java.lang.ref.WeakReference;
 import java.util.Vector;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.scrolltracking.ScrollTrackingBehavior;
 
-/**
- ~ Licensed under the Apache License, Version 2.0 (the "License");
- ~ you may not use this file except in compliance with the License.
- ~ You may obtain a copy of the License at
- ~
- ~      http://www.apache.org/licenses/LICENSE-2.0
- ~
- ~ Unless required by applicable law or agreed to in writing, software
- ~ distributed under the License is distributed on an "AS IS" BASIS,
- ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- ~ See the License for the specific language governing permissions and
- ~ limitations under the License.
- ~
- ~ https://github.com/miguelhincapie/CustomBottomSheetBehavior
- */
 
-public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends CoordinatorLayout.Behavior<V> {
+public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTrackingBehavior<V> {
 
     /**
      * Callback for monitoring events about bottom sheets.
@@ -186,7 +173,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
         ViewConfiguration configuration = ViewConfiguration.get(context);
         mMinimumVelocity = 4*configuration.getScaledMinimumFlingVelocity();
 
-        MIN_DISTANCE_FOR_FLING_PX = (int) ( context.getResources().getDimension( R.dimen.min_distance_for_fling ) * context.getResources().getDisplayMetrics().density );
+        MIN_DISTANCE_FOR_FLING_PX = (int) context.getResources().getDimension( R.dimen.min_distance_for_fling );
     }
 
     @Override
@@ -250,11 +237,15 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
         }
         mViewRef = new WeakReference<>(child);
         mNestedScrollingChildRef = new WeakReference<>( findScrollingChild( child ) );
-        return true;
+
+        return super.onLayoutChild( parent, child, layoutDirection );
     }
+
 
     @Override
     public boolean onInterceptTouchEvent( CoordinatorLayout parent, V child, MotionEvent event ) {
+        super.onInterceptTouchEvent( parent, child, event );
+
         if ( ! child.isShown() ) {
             return false;
         }
@@ -296,9 +287,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
         }
 
         if ( action == MotionEvent.ACTION_CANCEL ) {
-            // We don't want to trigger a BottomSheet fling as a result of a Cancel MotionEvent (e.g., parent horizontal scroll view taking over touch events)
-            mScrollVelocityTracker.clear();
-
             // Also, we don't want to trigger a BottomSheet click as a result of cancel
             mEventCancelled = true;
         }
@@ -313,7 +301,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
         boolean ret = action == MotionEvent.ACTION_MOVE && scroll != null &&
                 !mIgnoreEvents && mState != STATE_DRAGGING &&
                 !parent.isPointInChildBounds(scroll, (int) event.getX(), (int) event.getY()) &&
-                Math.abs(mInitialY - event.getY()) > mViewDragHelper.getTouchSlop()*5;
+                Math.abs(mInitialY - event.getY()) > mViewDragHelper.getTouchSlop();
         return ret;
     }
 
@@ -335,7 +323,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
         // The ViewDragHelper tries to capture only the top-most View. We have to explicitly tell it
         // to capture the bottom sheet in case it is not captured and the touch slop is passed.
         if ( action == MotionEvent.ACTION_MOVE  &&  ! mIgnoreEvents ) {
-            if ( Math.abs(mInitialY - event.getY()) > mViewDragHelper.getTouchSlop()*5 ) {
+            if ( Math.abs(mInitialY - event.getY()) > mViewDragHelper.getTouchSlop() ) {
                 //mViewDragHelper.processTouchEvent( event );
                 //mViewDragHelper.captureChildView( child, event.getPointerId(event.getActionIndex()) );
             }
@@ -349,81 +337,26 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
         return ( nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL ) != 0;
     }
 
-    private ScrollVelocityTracker mScrollVelocityTracker = new ScrollVelocityTracker();
-    private class ScrollVelocityTracker {
-        private long  mPreviousScrollTime    = 0;
-        private int   mTotalScrollDistancePx = 0; // Total distance of this scroll, since the user changed scroll direction, or paused the scroll
-        private float mScrollVelocity        = 0;
-        private int   mCurrentScrollY        = 0; // Since the start of this action
-
-        public void recordScroll( int dy ) {
-            mCurrentScrollY += dy;
-
-            long now = System.currentTimeMillis();
-
-            // If user changed the scroll direction, reset the total scroll distance measure
-            if (
-                    ( mTotalScrollDistancePx > 0  &&  dy < 0 )  ||
-                            ( mTotalScrollDistancePx < 0  &&  dy > 0 )
-                    ) {
-                mTotalScrollDistancePx = dy;
-                mPreviousScrollTime    = now;
-            }
-
-            if ( mPreviousScrollTime != 0 ) {
-                long elapsed = now - mPreviousScrollTime;
-                mScrollVelocity = (1.0f) * (float) mTotalScrollDistancePx / (float)elapsed * 1000; // pixels per sec
-
-                // If user paused scrolling, reset the total scroll measure
-                if ( Math.abs( mScrollVelocity ) < 10 ) {
-                    mTotalScrollDistancePx = dy;
-                    mPreviousScrollTime = now;
-                }
-                else {
-                    // Otherwise keep adding up the distance
-                    mTotalScrollDistancePx += dy;
-                }
-            }
-            else {
-                mPreviousScrollTime = now;
-            }
-        }
-
-        public void clear() {
-            mPreviousScrollTime    = 0;
-            mScrollVelocity        = 0;
-            mTotalScrollDistancePx = 0;
-            mCurrentScrollY        = 0;
-        }
-
-        public float getScrollVelocity() {
-            return mScrollVelocity;
-        }
-        public int getTotalScrollDistancePx() {
-            return mTotalScrollDistancePx;
-        }
-        public int getCurrentScrollY() {
-            return mCurrentScrollY;
-        }
-    }
-
     @Override
     public void onNestedPreScroll( CoordinatorLayout coordinatorLayout, V child, View target, int dx, int dy, int[] consumed ) {
+        super.onNestedPreScroll( coordinatorLayout, child, target, dx, dy, consumed );
+
+        Log.e("e","onnestedprescroll");
+
         View scrollingChild = mNestedScrollingChildRef.get();
         if ( target != scrollingChild ) {
             return;
         }
 
-        mScrollVelocityTracker.recordScroll( dy );
-
         int currentTop = child.getTop();
         int newTop     = currentTop - dy;
 
         // Force-stop at the anchor - do not go from collapsed to expanded in one scroll
+
         if (
                 ( mLastStableState == STATE_COLLAPSED  &&  newTop < mAnchorPoint )  ||
-                        ( mLastStableState == STATE_EXPANDED   &&  newTop > mAnchorPoint )
-                ) {
+                ( mLastStableState == STATE_EXPANDED   &&  newTop > mAnchorPoint )
+           ) {
             consumed[1] = dy;
             ViewCompat.offsetTopAndBottom( child, mAnchorPoint - currentTop );
             dispatchOnSlide( child.getTop() );
@@ -471,6 +404,8 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
 
     @Override
     public void onStopNestedScroll( CoordinatorLayout coordinatorLayout, V child, View target ) {
+        Log.e("e","on stop nested scroll");
+
         if ( child.getTop() == mMinOffset ) {
             setStateInternal( STATE_EXPANDED );
             mLastStableState = STATE_EXPANDED;
@@ -479,6 +414,9 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
         if ( target != mNestedScrollingChildRef.get()  ) {
             return;
         }
+
+        if ( ! mNestedScrolled )
+            return;
 
         int top;
         int targetState;
@@ -510,10 +448,13 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
             top = mAnchorPoint;
             targetState = STATE_ANCHOR_POINT;
         }
-        else {
+        else
+        {
             // Are we flinging up?
-            float scrollVelocity = mScrollVelocityTracker.getScrollVelocity();
-            int totalScrollDistance = mScrollVelocityTracker.getTotalScrollDistancePx();
+            float scrollVelocity    = getScrollVelocity();
+            int totalScrollDistance = getTotalScrollDistancePx();
+
+            Log.e("e","ScrollVel" + scrollVelocity + " totaldist=" + totalScrollDistance);
 
             if ( scrollVelocity > mMinimumVelocity && totalScrollDistance > MIN_DISTANCE_FOR_FLING_PX ) {
                 if ( mLastStableState == STATE_COLLAPSED ) {
@@ -631,7 +572,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
         }
 
         mNestedScrolled = false;
-        mScrollVelocityTracker.clear();
     }
 
     @Override
@@ -818,19 +758,19 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends Coordinat
 
         mState = state;
         View bottomSheet = mViewRef.get();
-
-        SlopSupportingNestedScrollView scroll = (SlopSupportingNestedScrollView)mNestedScrollingChildRef.get();
-        if ( scroll != null ) {
+        if ( mNestedScrollingChildRef.get() != null  &&  mNestedScrollingChildRef.get() instanceof SlopSupportingNestedScrollView ) {
+            SlopSupportingNestedScrollView scroll = (SlopSupportingNestedScrollView) mNestedScrollingChildRef.get();
             if ( state == STATE_COLLAPSED  ||  state == STATE_ANCHOR_POINT ) {
-                scroll.setApplyTouchSlop( true );
+                scroll.setApplyHighTouchSlop( true );
             }
             else {
-                scroll.setApplyTouchSlop( false );
+                scroll.setApplyHighTouchSlop( false );
             }
         }
 
         if ( state == STATE_HIDDEN  ||  state == STATE_COLLAPSED  ||  state == STATE_ANCHOR_POINT  ||  state == STATE_EXPANDED ) {
             mLastStableState = state;
+//EventBus.getDefault().post( new EventBottomSheetSettled( state ) );
 
             if ( bottomSheet != null  &&  mCallback != null  &&  ! noCallbacksNoAnim ) {
                 notifyStateChangedToListeners( bottomSheet, state );
