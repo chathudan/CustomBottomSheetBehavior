@@ -185,7 +185,7 @@ public class FloatingFrameLayout extends VisibilityAwareFrameLayout {
         @Override
         public boolean onDependentViewChanged( CoordinatorLayout parent, FloatingFrameLayout child, View dependency ) {
             if ( dependency instanceof SlopSupportingNestedScrollView ) {
-                //updateVisibilityForNestedScrollView( parent, (NestedScrollView) dependency, child );
+                updateVisibilityForSlopSupportingNestedScrollView( parent, (SlopSupportingNestedScrollView) dependency, child );
             }
             else
             if ( dependency instanceof AppBarLayout ) {
@@ -243,7 +243,7 @@ public class FloatingFrameLayout extends VisibilityAwareFrameLayout {
             ViewGroupUtilsHoneycomb.offsetDescendantRect( parent, descendant, out );
         }
 
-        private boolean updateVisibilityForNestedScrollView( CoordinatorLayout parent, SlopSupportingNestedScrollView nestedScrollView, FloatingFrameLayout child ) {
+        private boolean updateVisibilityForSlopSupportingNestedScrollView( CoordinatorLayout parent, SlopSupportingNestedScrollView nestedScrollView, FloatingFrameLayout child ) {
             if ( ! shouldUpdateVisibility( nestedScrollView, child ) ) {
                 return false;
             }

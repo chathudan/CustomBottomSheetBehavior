@@ -13,6 +13,8 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 
+import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+
 /**
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -38,7 +40,8 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     /**
      * One of the point used to set hide() or show() in FAB
      */
-    private float offset;
+    private float offset = -1;
+
     /**
      * The FAB should be hidden when it reach {@link #offset} or when {@link BottomSheetBehaviorGoogleMapsLike}
      * is visually lower than {@link BottomSheetBehaviorGoogleMapsLike#getPeekHeight()}.
@@ -47,7 +50,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
      */
     private WeakReference<BottomSheetBehaviorGoogleMapsLike> mBottomSheetBehaviorRef;
 
-    public ScrollAwareFABBehavior(Context context, AttributeSet attrs) {
+    public ScrollAwareFABBehavior( Context context, AttributeSet attrs ) {
         super();
         offset = 0;
         mBottomSheetBehaviorRef = null;
@@ -61,34 +64,33 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     }
 
     @Override
-    public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
-        if (dependency instanceof SlopSupportingNestedScrollView ) {
+    public boolean layoutDependsOn( CoordinatorLayout parent, FloatingActionButton child, View dependency ) {
+        if ( dependency instanceof SlopSupportingNestedScrollView ) {
             try {
-                BottomSheetBehaviorGoogleMapsLike.from(dependency);
+                BottomSheetBehaviorGoogleMapsLike.from( dependency );
                 return true;
             }
-            catch (IllegalArgumentException e){}
+            catch ( IllegalArgumentException e ) { }
         }
         return false;
     }
 
     @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
+    public boolean onDependentViewChanged( CoordinatorLayout parent, FloatingActionButton child, View dependency ) {
         /**
          * Because we are not moving it, we always return false in this method.
          */
-
-        if (offset == 0)
-            setOffsetValue(parent);
-
-        if (mBottomSheetBehaviorRef == null)
+        if ( mBottomSheetBehaviorRef == null )
             getBottomSheetBehavior(parent);
 
         int DyFix = getDyBetweenChildAndDependency(child, dependency);
 
-        if ((child.getY() + DyFix) < offset)
-            child.hide();
-        else if ((child.getY() + DyFix) >= offset) {
+        if ( (child.getY() + DyFix) < offset ) {
+            child.setVisibility( View.INVISIBLE );
+            //child.hide();
+        }
+        else
+        if ( (child.getY() + DyFix) >= offset ) {
 
             /**
              * We are calculating every time point in Y where BottomSheet get {@link BottomSheetBehaviorGoogleMapsLike#STATE_COLLAPSED}.
@@ -98,10 +100,14 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
                 getBottomSheetBehavior(parent);
             int collapsedY = dependency.getHeight() - mBottomSheetBehaviorRef.get().getPeekHeight();
 
-            if ((child.getY() + DyFix) > collapsedY)
-                child.hide();
-            else
-                child.show();
+            if ((child.getY() + DyFix) > collapsedY) {
+                child.setVisibility( View.INVISIBLE );
+                //child.hide();
+            }
+            else {
+                child.setVisibility( View.VISIBLE );
+                //child.show();
+            }
         }
 
         return false;
@@ -127,23 +133,10 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     }
 
     /**
-     * Define one of the point in where the FAB should be hide when it reachs that point.
-     * @param coordinatorLayout container of BottomSheet and AppBarLayout
+     * Define one of the point in where the FAB should be hide when it reaches that point.
      */
-    private void setOffsetValue(CoordinatorLayout coordinatorLayout) {
-
-        for (int i = 0; i < coordinatorLayout.getChildCount(); i++) {
-            View child = coordinatorLayout.getChildAt(i);
-
-            if (child instanceof AppBarLayout) {
-
-                if (child.getTag() != null &&
-                        child.getTag().toString().contentEquals("modal-appbar") ) {
-                    offset = child.getY()+child.getHeight();
-                    break;
-                }
-            }
-        }
+    public void setOffsetValue( int offset ) {
+        this.offset = offset;
     }
 
     /**

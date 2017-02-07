@@ -3,11 +3,15 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.FloatingFrameLayout;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.ScrollAwareFABBehavior;
 
 import java.lang.ref.WeakReference;
 
@@ -40,7 +44,8 @@ public class BottomSheetPage {
     private WeakReference<BottomSheetPagerAdapter> mPagerAdapterRef;
     protected BottomSheetPagerAdapter pagerAdapter() { return mPagerAdapterRef.get(); }
 
-    protected View               mNestedScrollView;
+    //private   View mFabFloatingFrameLayout;
+    protected View mNestedScrollView;
 
     public int getBottomSheetState() {
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)mInflatedView.findViewById( R.id.bottom_sheet ).getLayoutParams();
@@ -56,6 +61,7 @@ public class BottomSheetPage {
 
     protected void initializeUI() {
         mNestedScrollView = mInflatedView.findViewById( R.id.bottom_sheet );
+        setFabBehaviorParameters();
         setOnBottomSheetStateChangedListener();
     }
     protected void setUI( int position ) { }
@@ -84,6 +90,26 @@ public class BottomSheetPage {
             @Override
             public void onSlide( @NonNull View bottomSheet, float slideOffset ) { }
         });
+    }
+
+    private void setFabBehaviorParameters() {
+        FloatingActionButton ffl = (FloatingActionButton) mInflatedView.findViewById( R.id.fab);
+        if ( ffl != null ) {
+            int fabHeight = (int)ffl.getContext().getResources().getDimension( R.dimen.fab_size );
+            int toolbarHeight = 0;
+            TypedValue tv = new TypedValue();
+            if ( ffl.getContext().getTheme().resolveAttribute( android.R.attr.actionBarSize, tv, true ) ) {
+                toolbarHeight = TypedValue.complexToDimensionPixelSize( tv.data, ffl.getContext().getResources().getDisplayMetrics() );
+            }
+
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ffl.getLayoutParams();
+            ScrollAwareFABBehavior behavior = (ScrollAwareFABBehavior)params.getBehavior();
+            behavior.setOffsetValue( toolbarHeight + fabHeight / 2 );
+            //behavior.setHideTopOffsetPx( toolbarHeight + fabHeight / 2 );
+            //behavior.setHideBottomOffsetPx( toolbarHeight );//+ (int)(6 * MainActivity.sDensity) );
+            //ffl.setAnimateSize( true );
+            params.setBehavior( behavior );
+        }
     }
 
 }

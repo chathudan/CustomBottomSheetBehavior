@@ -11,7 +11,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/delegating_appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="0px"
         android:theme="@style/AppTheme.AppBarOverlayLight"
         android:background="#0000"
         app:layout_behavior="co.com.parsoniisolutions.custombottomsheetbehavior.lib.DelegatingScrollingAppBarLayoutBehavior">
@@ -64,67 +64,79 @@
         app:behavior_hideable="true">
 
         <include
-                android:id="@+id/bsc"
-                layout="@layout/bottom_sheet_content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            android:id="@+id/bsc"
+            layout="@layout/bottom_sheet_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </android.support.v4.widget.SlopSupportingNestedScrollView>
 
-    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.FloatingFrameLayout
-            android:id="@+id/cameraFrameLayout"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            app:layout_anchor="@id/bottom_sheet"
-            app:layout_anchorGravity="top|right|end"
-            android:src="@drawable/ic_action_go"
-            android:layout_margin="@dimen/fab_margin"
-            android:transformPivotX="@dimen/fab_size_half"
-            android:transformPivotY="@dimen/fab_size_half"
-            android:clickable="true" >
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:layout_anchor="@id/bottom_sheet"
+        app:layout_anchorGravity="top|right|end"
+        android:src="@drawable/ic_action_go"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_behavior="@string/ScrollAwareFABBehavior"
+        android:clickable="true"/>
 
-        <!-- Add a camera button -->
+<!--
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.FloatingFrameLayout
+        android:id="@+id/fabFrameLayout"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:layout_anchor="@id/bottom_sheet"
+        app:layout_anchorGravity="top|right|end"
+        android:src="@drawable/ic_action_go"
+        android:layout_margin="@dimen/fab_margin"
+        android:transformPivotX="@dimen/fab_size_half"
+        android:transformPivotY="@dimen/fab_size_half"
+        android:clickable="true" >
+
         <com.dd.ShadowLayout
-                android:id="@+id/btnCameraWShadow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:sl_shadowRadius="4dp"
-                app:sl_shadowColor="#66000000"
-                app:sl_dx="2dp"
-                app:sl_dy="2dp"
-                app:sl_cornerRadius="30dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true">
+            android:id="@+id/btnCameraWShadow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:sl_shadowRadius="4dp"
+            app:sl_shadowColor="#66000000"
+            app:sl_dx="2dp"
+            app:sl_dy="2dp"
+            app:sl_cornerRadius="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true">
 
             <ImageButton
-                    android:id="@+id/btnCamera"
-                    android:layout_width="@dimen/fab_size"
-                    android:layout_height="@dimen/fab_size"
-                    android:background="@drawable/fab_background"
-                    app:srcCompat="@drawable/ic_action_go" />
+                android:id="@+id/btnCamera"
+                android:layout_width="@dimen/fab_size"
+                android:layout_height="@dimen/fab_size"
+                android:background="@drawable/fab_background"
+                app:srcCompat="@drawable/ic_action_go" />
         </com.dd.ShadowLayout>
     </co.com.parsoniisolutions.custombottomsheetbehavior.lib.FloatingFrameLayout>
+-->
 
     <!-- Toolbar visible on detail screen -->
     <android.support.design.widget.AppBarLayout
-            android:id="@+id/delegating_merged_appbarlayout"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:background="@android:color/transparent"
-            android:theme="@style/AppTheme.AppBarOverlayDark"
-            android:tag="modal-appbar"
-            app:layout_behavior="co.com.parsoniisolutions.custombottomsheetbehavior.lib.DelegatingMergedAppBarLayoutBehavior" >
+        android:id="@+id/delegating_merged_appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlayDark"
+        android:tag="modal-appbar"
+        app:layout_behavior="co.com.parsoniisolutions.custombottomsheetbehavior.lib.DelegatingMergedAppBarLayoutBehavior" >
 
         <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <android.support.v7.widget.Toolbar
-                    android:id="@+id/delegating_expanded_toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:popupTheme="@style/AppTheme.PopupOverlay"
-                    app:title="Modal-Toolbar-Title"
-                    android:background="@color/colorPrimaryDark" />
+                android:id="@+id/delegating_expanded_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:title="Modal-Toolbar-Title"
+                android:background="@color/colorPrimaryDark" />
         </FrameLayout>
     </android.support.design.widget.AppBarLayout>
 

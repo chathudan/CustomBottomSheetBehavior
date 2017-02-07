@@ -17,7 +17,8 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:theme="@style/AppTheme.AppBarOverlayLight"
-        android:background="#FFEEEEEE">
+        android:background="#FFEEEEEE"
+        android:visibility="gone">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/scrolltoolbar"
