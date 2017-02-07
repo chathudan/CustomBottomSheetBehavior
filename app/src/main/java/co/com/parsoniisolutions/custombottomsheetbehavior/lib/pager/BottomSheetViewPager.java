@@ -19,7 +19,7 @@ public class BottomSheetViewPager extends ViewPager {
 
     public BottomSheetViewPager( Context context, AttributeSet attrs ) {
         super( context, attrs );
-        addOnPageChangeListener( mOnPageChangeListener );
+        init();
     }
 
     /**
@@ -30,6 +30,8 @@ public class BottomSheetViewPager extends ViewPager {
         int peekHeight   = (int)getContext().getResources().getDimension( R.dimen.bottom_sheet_peek_height );
         int screenHeight = getContext().getResources().getDisplayMetrics().heightPixels;
         mTopOfCollapsedSheetY = screenHeight - peekHeight;
+
+        addOnPageChangeListener( mOnPageChangeListener );
     }
 
     private OnPageChangeListener mOnPageChangeListener = new OnPageChangeListener() {
