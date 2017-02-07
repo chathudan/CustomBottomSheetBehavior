@@ -30,16 +30,6 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetV
 
 public class MainActivity extends AppCompatActivity {
 
-
-    int[] mDrawables = {
-            R.drawable.cheese_3,
-            R.drawable.cheese_3,
-            R.drawable.cheese_3,
-            R.drawable.cheese_3,
-            R.drawable.cheese_3,
-            R.drawable.cheese_3
-    };
-
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
@@ -120,7 +110,21 @@ public class MainActivity extends AppCompatActivity {
 
         List<MainContentPagerItem> pageList = new ArrayList<>();
         for ( int i = 1; i < 10; ++i ) {
-            MainContentPagerItem item = new MainContentPagerItem( "Title " + i, "Description " + i, new ArrayList<Integer>() {{ add( R.drawable.cheese_3 ); }} );
+            List<Integer> drawableList = new ArrayList<>();
+            if ( i == 1 ) {
+                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_2 ); add( R.drawable.cheese_3 );}};
+            }
+            else
+            if ( i == 2 ) {
+                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_4 ); }};
+            }
+            else
+            if ( i == 3 ) {
+                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_5 ); }};
+            }
+
+            MainContentPagerItem item = new MainContentPagerItem( "Title " + i, "Description " + i, drawableList );
+
             pageList.add( item );
         }
 

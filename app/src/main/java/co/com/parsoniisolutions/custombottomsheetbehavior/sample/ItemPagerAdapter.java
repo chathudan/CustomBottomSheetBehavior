@@ -7,23 +7,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import java.util.List;
+
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 
 public class ItemPagerAdapter extends android.support.v4.view.PagerAdapter {
 
-    Context mContext;
     LayoutInflater mLayoutInflater;
-    final int[] mItems;
+    final List<Integer> mItems;
 
-    public ItemPagerAdapter(Context context, int[] items) {
-        this.mContext = context;
-        this.mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public ItemPagerAdapter(Context context, List<Integer> items ) {
+        this.mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.mItems = items;
     }
 
     @Override
     public int getCount() {
-        return mItems.length;
+        return mItems.size();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ItemPagerAdapter extends android.support.v4.view.PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View itemView = mLayoutInflater.inflate(R.layout.photo_pager_item, container, false);
         ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
-        imageView.setImageResource(mItems[position]);
+        imageView.setImageResource(mItems.get( position) );
         container.addView(itemView);
         return itemView;
     }
