@@ -326,7 +326,11 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         // The ViewDragHelper tries to capture only the top-most View. We have to explicitly tell it
         // to capture the bottom sheet in case it is not captured and the touch slop is passed.
         if ( action == MotionEvent.ACTION_MOVE  &&  ! mIgnoreEvents ) {
-            if ( Math.abs(mInitialY - event.getY()) > mViewDragHelper.getTouchSlop() ) {
+            int slop = mViewDragHelper.getTouchSlop();
+            if ( child instanceof SlopSupportingNestedScrollView ) {
+                slop = ((SlopSupportingNestedScrollView)child).touchSlop();
+            }
+            if ( Math.abs(mInitialY - event.getY()) > slop ) {
                 //View grab = ((ViewGroup)child).getChildAt( 0 );
                 //Log.e("e","Grabbing " + grab);
                 mViewDragHelper.captureChildView( child, event.getPointerId(event.getActionIndex()) );
@@ -866,31 +870,47 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
         @Override
         public void onViewReleased( View releasedChild, float xvel, float yvel ) {
+            Log.e("E","yvel=" + yvel);
             int top;
             @State int targetState;
-            if ( yvel < 0 ) { // Moving up
-                top = mMinOffset;
-                targetState = STATE_EXPANDED;
+            if ( yvel < -mMinimumVelocity ) { // Flinging up
+                if ( mLastStableState == STATE_ANCHOR_POINT ) {
+                    top = mMinOffset;
+                    targetState = STATE_EXPANDED;
+                }
+                else {
+                    top = mAnchorPoint;
+                    targetState = STATE_ANCHOR_POINT;
+                }
             }
-            else {
-                Log.e( "e", "yvel=" + yvel );
-                if ( yvel > mMinimumVelocity ) {
-                    // Flinging to collapsed
+            else
+            if ( yvel > mMinimumVelocity ) { // Flinging down
+                if ( mLastStableState == STATE_ANCHOR_POINT ) {
                     top = mMaxOffset;
                     targetState = STATE_COLLAPSED;
                 }
                 else {
-                    int releasedChildTop = (int) releasedChild.getTop();
-                    if ( releasedChildTop < mMaxOffset && releasedChildTop > (mAnchorPoint + mMaxOffset) / 2 ) {
-                        // Photo was dragged below the half-point, so settle to collapsed
-                        top = mMaxOffset;
-                        targetState = STATE_COLLAPSED;
-                    }
-                    else {
-                        // Photo was not dragged far enough, so spring back to anchor
-                        top = mAnchorPoint;
-                        targetState = STATE_ANCHOR_POINT;
-                    }
+                    top = mAnchorPoint;
+                    targetState = STATE_ANCHOR_POINT;
+                }
+            }
+            else {
+                int releasedChildTop = releasedChild.getTop();
+                if ( releasedChildTop < mMaxOffset && releasedChildTop > (mAnchorPoint + mMaxOffset) / 2 ) {
+                    // Photo was dragged below the bottom half-point, so settle to collapsed
+                    top = mMaxOffset;
+                    targetState = STATE_COLLAPSED;
+                }
+                else
+                if ( releasedChildTop < (mMinOffset + mAnchorPoint) / 2 ) {
+                    // Photo was dragged above the top half-point, so settle to expanded
+                    top = mMinOffset;
+                    targetState = STATE_EXPANDED;
+                }
+                else {
+                    // Photo was not dragged far enough, so spring back to anchor
+                    top = mAnchorPoint;
+                    targetState = STATE_ANCHOR_POINT;
                 }
             }
             //}
@@ -915,7 +935,16 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                 targetState = STATE_COLLAPSED;
             }
 */
-            if ( mViewDragHelper.settleCapturedViewAt( releasedChild.getLeft(), top ) ) {
+
+            if ( mViewDragHelper.smoothSlideViewTo( releasedChild, releasedChild.getLeft(), top ) ) {
+                setStateInternal( STATE_SETTLING );
+                mSettlingToState = targetState;
+                ViewCompat.postOnAnimation( releasedChild, new SettleRunnable( releasedChild, targetState, false ) );
+            } else {
+                setStateInternal( targetState );
+            }
+/*
+          if ( mViewDragHelper.settleCapturedViewAt( releasedChild.getLeft(), top ) ) {
                 setStateInternal( STATE_SETTLING );
                 mSettlingToState = targetState;
                 ViewCompat.postOnAnimation( releasedChild, new SettleRunnable( releasedChild, targetState, false ) );
@@ -923,6 +952,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             else {
                 setStateInternal( targetState );
             }
+*/
         }
 
         @Override

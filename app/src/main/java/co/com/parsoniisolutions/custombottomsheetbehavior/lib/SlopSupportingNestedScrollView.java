@@ -135,7 +135,7 @@ public class SlopSupportingNestedScrollView extends FrameLayout implements Neste
     }
     private int mLowTouchSlop;
     private int mHighTouchSlop;
-    private int touchSlop() { return applyHighTouchSlop ? mHighTouchSlop : mLowTouchSlop; }
+    public int touchSlop() { return applyHighTouchSlop ? mHighTouchSlop : mLowTouchSlop; }
 
     private int mMinimumVelocity;
     private int mMaximumVelocity;
