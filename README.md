@@ -24,15 +24,15 @@ Wanna improve it?
 Go ahead!<br>
 Giving thx to @akaN44 and @vit001 for their contribution :D.
 
-## Currently Supported Features:
--Smooth drag between states, force stop at STATE_ANCHOR_POINT.
--Fling between adjacent states, force stop at STATE_ANCHOR_POINT.
--Dragging or flinging can be performed on both the BottomSheet, or the Backdrop (parallax photo).
--Multiple photos can be provided, and you can swipe between them.
--BottomSheet can be scrolled horizontally and display data provided by ViewPagerAdapter.
--Horizontal scrolling can be done both by swiping on the BottomSheet and by swiping on the Backdrop (parallax photo).
--If multiple photos are present, swiping on photos will first swipe to the last photo, then swiping will resume on BottomSheets.
--BottomSheet can be made non-hideable and/or non-collapsible.
+## Currently Supported Features: (@vit001)<br>
+-Smooth drag between states, force stop at STATE_ANCHOR_POINT.<br>
+-Fling between adjacent states, force stop at STATE_ANCHOR_POINT.<br>
+-Dragging or flinging can be performed on both the BottomSheet, or the Backdrop (parallax photo).<br>
+-Multiple photos can be provided, and you can swipe between them.<br>
+-BottomSheet can be scrolled horizontally and display data provided by ViewPagerAdapter.<br>
+-Horizontal scrolling can be done both by swiping on the BottomSheet and by swiping on the Backdrop (parallax photo).<br>
+-If multiple photos are present, swiping on photos will first swipe to the last photo, then swiping will resume on BottomSheets.<br>
+-BottomSheet can be made non-hideable and/or non-collapsible.<br>
 
 
 ## Question about it in StackOverflow
