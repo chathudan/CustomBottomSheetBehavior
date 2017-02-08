@@ -1,14 +1,4 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.sample;
-
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.View;
+package co.com.parsoniisolutions.custombottomsheetbehavior.sample.withloading;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,22 +8,35 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.map.MapViewWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout;
+import co.com.parsoniisolutions.custombottomsheetbehavior.sample.CheeseData;
 
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * More advanced demo with async loading and coordination with map
+ */
+public class MainActivityWithLoading extends AppCompatActivity {
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
-        setContentView( R.layout.activity_main );
+        setContentView( R.layout.activity_main_with_loading );
         MapView mapView = (MapView)findViewById( R.id.map );
         mapView.onCreate( null ); // Was getting weird exceptions if passed bundle: java.lang.RuntimeException: Unable to start activity
         mapView.onResume(); // needed to get the map to display immediately
@@ -59,30 +62,30 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setTitle(" ");
         }
 
-        List<MainContentPagerItem> pageList = new ArrayList<>();
+        List<CheeseData> pageList = new ArrayList<>();
         for ( int i = 1; i < 10; ++i ) {
-            List<Integer> drawableList = new ArrayList<>();
+            List<Integer> drawableList;
             if ( i == 1 ) {
-                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_2 ); add( R.drawable.cheese_3 );}};
+                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_1 ); add( R.drawable.cheese_2 );}};
             }
             else
             if ( i == 2 ) {
-                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_4 ); }};
+                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_3 ); }};
             }
             else
             if ( i == 3 ) {
-                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_5 ); }};
+                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_4 ); }};
             }
             else {
                 drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_default ); }};
             }
 
-            MainContentPagerItem item = new MainContentPagerItem( "Title " + i, "Description " + i, drawableList );
+            CheeseData item = new CheeseData( "Title " + i, "Description " + i, drawableList );
 
             pageList.add( item );
         }
 
-        MainContentViewPagerAdapter adapter = new MainContentViewPagerAdapter( pageList );
+        BottomSheetPagerAdapterCheeseWithLoading adapter = new BottomSheetPagerAdapterCheeseWithLoading( pageList );
         final BottomSheetViewPager bottomSheetViewPager = (BottomSheetViewPager) findViewById( R.id.view_pager_main_content );
         bottomSheetViewPager.setAdapter( adapter );
         bottomSheetViewPager.setOffscreenPageLimit( 0 );
@@ -152,14 +155,6 @@ public class MainActivity extends AppCompatActivity {
      * @param googleMap
      */
     private void mapReady( GoogleMap googleMap ) {
-        int toolbarHeight = 0;
-        TypedValue tv = new TypedValue();
-        if ( getTheme().resolveAttribute( android.R.attr.actionBarSize, tv, true ) ) {
-            toolbarHeight = TypedValue.complexToDimensionPixelSize( tv.data, getResources().getDisplayMetrics() );
-        }
-
-        googleMap.setPadding( 0, toolbarHeight + DimensionUtils.getStatusBarHeight( this ), 0, 0 );
-
         googleMap.getUiSettings().setCompassEnabled( true );
         googleMap.getUiSettings().setMyLocationButtonEnabled( true );
 
@@ -170,7 +165,9 @@ public class MainActivity extends AppCompatActivity {
                 .target( new LatLng( 40.0f, -120.0f ) )
                 .zoom( 4.0f )
                 .build();
-        googleMap.animateCamera( CameraUpdateFactory.newCameraPosition( cameraPosition ) );
+
+        MapViewWithLoading mapView = (MapViewWithLoading) findViewById( R.id.map );
+        mapView.animateCameraWithEvents( CameraUpdateFactory.newCameraPosition( cameraPosition ) );
     }
 
 }

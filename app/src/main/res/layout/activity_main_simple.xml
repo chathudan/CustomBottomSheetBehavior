@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinatorlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".sample.simple.MainActivitySimple">
+
+    <!-- Toolbar on map when bottom sheet is collapsed or hidden -->
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.ScrollAppBarLayout
+        android:id="@+id/appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:theme="@style/AppTheme.AppBarOverlayLight"
+        android:background="#FFEEEEEE">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/scrolltoolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_search_grey600_24dp" />
+
+    </co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.ScrollAppBarLayout>
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white" />
+
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager
+        android:id="@+id/view_pager_main_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- Toolbar visible on detail screen -->
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout
+        android:id="@+id/merged_appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_sheet_peek_height"
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlayDark"
+        android:visibility="invisible"
+        android:gravity="bottom"
+        app:elevation="0dp"
+        android:tag="modal-appbar">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom">
+
+                <View
+                    android:id="@+id/merged_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_gravity="bottom"/>
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/expanded_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:popupTheme="@style/AppTheme.PopupOverlay"
+                    app:title="Modal-Toolbar-Title"
+                    android:layout_gravity="bottom"
+                    android:layout_alignParentBottom="true"
+                    app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+                    android:background="@drawable/merged_appbar_darkener" />
+
+                <!-- Shadow gradient underneath the transparent toolbar -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@id/expanded_toolbar"
+                    android:background="#77000000" />
+
+            </RelativeLayout>
+        </FrameLayout>
+    </co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout>
+</android.support.design.widget.CoordinatorLayout>

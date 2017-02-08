@@ -11,6 +11,7 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingMergedAppBarLayoutBehavior;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.ScrollAwareFABBehavior;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetData;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingScrollingAppBarLayoutBehavior;
 
@@ -31,17 +32,22 @@ public class BottomSheetPage {
         mInflatedView.setTag( R.id.BOTTOM_SHEET_PAGE, this );
     }
 
-    protected View               mInflatedView;
-    public View inflatedView() {
-        return mInflatedView;
-    }
+    protected View                  mInflatedView;
+    public    View inflatedView() { return mInflatedView; }
 
     public @LayoutRes int layoutRes() { throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override layoutRes()" ); }
 
     private int mPosition = -1;
-    void setCorrespondingAdapterPosition( int position ) {
+    void setNewAdapterPosition( int position ) {
         mPosition = position;
-        setUI( position );
+        setUILoading();
+        // Ask for new data asynchronously
+        getBottomSheetDataAsync( position, new OnBottomSheetDataLoadedCallback() {
+            @Override
+            public void onDataLoaded( BottomSheetData bottomSheetData ) {
+                setUI( bottomSheetData );
+            }
+        } );
     }
 
     private WeakReference<BottomSheetPagerAdapter> mPagerAdapterRef;
@@ -69,7 +75,9 @@ public class BottomSheetPage {
         setDelegatingMergedToolbarParameters();
         setDelegatingScrollToolbarParameters();
     }
-    protected void setUI( int position ) { }
+
+    public void setUI( BottomSheetData bottomSheetData ) { throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override setUI()" ); }
+    public void setUILoading() { throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override setUILoading()" ); }
 
     /**
      * Close any database cursors or perform any other cleanup necessary
@@ -98,16 +106,13 @@ public class BottomSheetPage {
     }
 
     private void setFabBehaviorParameters() {
-        FloatingActionButton ffl = (FloatingActionButton) mInflatedView.findViewById( R.id.fab);
+        FloatingActionButton ffl = (FloatingActionButton) mInflatedView.findViewById( R.id.fab );
         if ( ffl != null ) {
             int fabHeight = (int)ffl.getContext().getResources().getDimension( R.dimen.fab_size );
 
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ffl.getLayoutParams();
             ScrollAwareFABBehavior behavior = (ScrollAwareFABBehavior)params.getBehavior();
             behavior.setOffsetValue( DimensionUtils.getToolbarHeight(ffl.getContext()) + fabHeight / 2 );
-            //behavior.setHideTopOffsetPx( toolbarHeight + fabHeight / 2 );
-            //behavior.setHideBottomOffsetPx( toolbarHeight );//+ (int)(6 * MainActivity.sDensity) );
-            //ffl.setAnimateSize( true );
             params.setBehavior( behavior );
         }
     }
@@ -136,5 +141,12 @@ public class BottomSheetPage {
             return false;
         }
         return mPagerAdapterRef.get().selectedPosition() == mPosition;
+    }
+
+    public interface OnBottomSheetDataLoadedCallback {
+        void onDataLoaded( BottomSheetData bottomSheetData );
+    }
+    protected void getBottomSheetDataAsync( int position, OnBottomSheetDataLoadedCallback cb ) {
+        throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override getBottomSheetDataAsync()" );
     }
 }

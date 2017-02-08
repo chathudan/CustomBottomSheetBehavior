@@ -7,7 +7,7 @@
     android:id="@+id/coordinatorlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".sample.MainActivity">
+    tools:context=".sample.withloading.MainActivityWithLoading">
 
     <!-- Toolbar on map when bottom sheet is collapsed or hidden -->
     <co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.ScrollAppBarLayout
@@ -27,13 +27,13 @@
 
     </co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.ScrollAppBarLayout>
 
-    <com.google.android.gms.maps.MapView
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.map.MapViewWithLoading
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white" />
 
-    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetViewPagerWithLoading
         android:id="@+id/view_pager_main_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"

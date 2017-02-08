@@ -11,12 +11,12 @@ import java.util.List;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 
-public class ItemPagerAdapter extends android.support.v4.view.PagerAdapter {
+public class PhotosPagerAdapter extends android.support.v4.view.PagerAdapter {
 
     LayoutInflater mLayoutInflater;
     final List<Integer> mItems;
 
-    public ItemPagerAdapter(Context context, List<Integer> items ) {
+    public PhotosPagerAdapter(Context context, List<Integer> items ) {
         this.mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.mItems = items;
     }
