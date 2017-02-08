@@ -13,7 +13,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SlopSupportingNestedScrollView;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -330,8 +329,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                 slop = ((SlopSupportingNestedScrollView)child).touchSlop();
             }
             if ( Math.abs(mInitialY - event.getY()) > slop ) {
-                //View grab = ((ViewGroup)child).getChildAt( 0 );
-                //Log.e("e","Grabbing " + grab);
                 mViewDragHelper.captureChildView( child, event.getPointerId(event.getActionIndex()) );
             }
         }
@@ -347,8 +344,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
     @Override
     public void onNestedPreScroll( CoordinatorLayout coordinatorLayout, V child, View target, int dx, int dy, int[] consumed ) {
         super.onNestedPreScroll( coordinatorLayout, child, target, dx, dy, consumed );
-
-        Log.e("e","onnestedprescroll");
 
         View scrollingChild = mNestedScrollingChildRef.get();
         if ( target != scrollingChild ) {
@@ -411,7 +406,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
     @Override
     public void onStopNestedScroll( CoordinatorLayout coordinatorLayout, V child, View target ) {
-        Log.e("e","on stop nested scroll");
 
         if ( child.getTop() == mMinOffset ) {
             setStateInternal( STATE_EXPANDED );
@@ -460,8 +454,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             // Are we flinging up?
             float scrollVelocity    = getScrollVelocity();
             int totalScrollDistance = getTotalScrollDistancePx();
-
-            Log.e("e","ScrollVel" + scrollVelocity + " totaldist=" + totalScrollDistance);
 
             if ( scrollVelocity > mMinimumVelocity && totalScrollDistance > MIN_DISTANCE_FOR_FLING_PX ) {
                 if ( mLastStableState == STATE_COLLAPSED ) {
@@ -869,7 +861,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
         @Override
         public void onViewReleased( View releasedChild, float xvel, float yvel ) {
-            Log.e("E","yvel=" + yvel);
+
             int top;
             @State int targetState;
             if ( yvel < -mMinimumVelocity ) { // Flinging up

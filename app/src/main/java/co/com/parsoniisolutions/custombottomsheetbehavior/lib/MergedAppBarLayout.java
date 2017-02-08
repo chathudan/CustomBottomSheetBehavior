@@ -1,8 +1,15 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBusException;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -11,10 +18,6 @@ import android.view.ViewPropertyAnimator;
 import android.widget.RelativeLayout;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.EventBusException;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 
 /**
@@ -47,6 +50,10 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
         mMergedPartialBackgroundLayoutParams = (RelativeLayout.LayoutParams)getLayoutParams();
     }
 
+    private @ColorRes int getFullBackgroundColorRes()     { return android.R.color.transparent; } // return R.color.colorPrimaryDark; }
+    private void setFullBackGroundColor( @ColorRes int colorRes ){
+        setBackgroundColor( ContextCompat.getColor( getContext(), colorRes ) );
+    }
     private void setVisible( boolean visible ) {
         if ( ! visible  && mVisible ) {
             mAppBarLayoutAnimation = animate().setDuration( getResources().getInteger( android.R.integer.config_shortAnimTime ) );
@@ -75,6 +82,17 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
             mVisible = true;
 
             mAppBarLayoutAnimation = animate().setDuration( getResources().getInteger( android.R.integer.config_shortAnimTime ) );
+            mAppBarLayoutAnimation.setListener( new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart( Animator animation ) {
+                    super.onAnimationStart( animation );
+                }
+
+                @Override
+                public void onAnimationEnd( Animator animation ) {
+                    super.onAnimationEnd( animation );
+                }
+            });
             mAppBarLayoutAnimation.alpha( 1 ).y( 0 ).start();
         }
     }
@@ -93,6 +111,7 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
             return;
 
         // TODO - If we are between states, do not update the state
+
         if ( ev.getState() == EventMergedAppBarVisibility.State.BELOW_ANCHOR_POINT ) {
             setPartialBackGroundHeight( ev.getPartialBackgroundHeight() );
             setVisible( false );
@@ -101,28 +120,24 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
         if ( ev.getState() == EventMergedAppBarVisibility.State.ABOVE_ANCHOR_POINT ) {
             setPartialBackGroundHeight( ev.getPartialBackgroundHeight() );
             setVisible( true );
+            setFullBackGroundColor( android.R.color.transparent );
         }
         else
         if ( ev.getState() == EventMergedAppBarVisibility.State.INSIDE_TOOLBAR ) {
             setVisible( true );
+            setFullBackGroundColor( android.R.color.transparent );
             setPartialBackGroundHeight( ev.getPartialBackgroundHeight() );
         }
         else
         if ( ev.getState() == EventMergedAppBarVisibility.State.TOP_OF_TOOLBAR ) {
             setVisible( true );
+            setFullBackGroundColor( getFullBackgroundColorRes() );
             setPartialBackGroundHeight( ev.getPartialBackgroundHeight() );
         }
     }
 
-    private int mShadowHeight = -1; // Height of the shadow above the BottomSheet
-    private int getShadowHeight() {
-        if ( mShadowHeight == -1 ) {
-            mShadowHeight = (int)getContext().getResources().getDimension( R.dimen.bottom_sheet_shadow_height );
-        }
-        return mShadowHeight;
-    }
     private void setPartialBackGroundHeight( int height ) {
-        int newHeight = Math.max( 0, height );// - getShadowHeight() );
+        int newHeight = Math.max(0, height );
         if ( mMergedPartialBackgroundLayoutParams.height != newHeight ) {
             mMergedPartialBackgroundLayoutParams.height = newHeight;
 
