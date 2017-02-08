@@ -10,21 +10,22 @@
     tools:context=".sample.MainActivity">
 
     <!-- Toolbar on map when bottom sheet is collapsed or hidden -->
-    <android.support.design.widget.AppBarLayout
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.ScrollAppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:theme="@style/AppTheme.AppBarOverlayLight"
-        android:background="#FFEEEEEE"
-        android:visibility="gone">
+        android:background="#FFEEEEEE">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/scrolltoolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
-    </android.support.design.widget.AppBarLayout>
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_search_grey600_24dp" />
+
+    </co.com.parsoniisolutions.custombottomsheetbehavior.lib.ScrollAppBarLayout>
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
@@ -78,8 +79,8 @@
                     app:title="Modal-Toolbar-Title"
                     android:layout_gravity="bottom"
                     android:layout_alignParentBottom="true"
-                    app:navigationIcon="@drawable/ic_close_white_24dp"
-                    android:background="@drawable/full_bleed_image_darkener" />
+                    app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+                    android:background="@drawable/merged_appbar_darkener" />
 
                 <!-- Shadow gradient underneath the transparent toolbar -->
                 <View

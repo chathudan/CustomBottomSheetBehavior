@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
@@ -64,7 +65,21 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
     public abstract BottomSheetPage createNewPage( LayoutInflater inflater );
 
 
+
+    private Vector<BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback> mBottomSheetStateCallbacks;
+    public void addBottomSheetCallback( BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback bottomSheetCallback ) {
+        if ( mBottomSheetStateCallbacks == null ) {
+            mBottomSheetStateCallbacks = new Vector<>();
+        }
+
+        mBottomSheetStateCallbacks.add( bottomSheetCallback );
+    }
+
     public void onBottomSheetStateChanged( int newState, BottomSheetPage bottomSheetPage ) {
+        for ( BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback cb : mBottomSheetStateCallbacks ) {
+            cb.onStateChanged( bottomSheetPage.inflatedView(), newState );
+        }
+
         if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
                newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||
                newState == BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED )

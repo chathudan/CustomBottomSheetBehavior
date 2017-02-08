@@ -47,7 +47,7 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
             e.printStackTrace();
         }
 
-        mMergedPartialBackgroundLayoutParams = (RelativeLayout.LayoutParams)getLayoutParams();
+        //mMergedPartialBackgroundLayoutParams = (RelativeLayout.LayoutParams)getLayoutParams();
     }
 
     private @ColorRes int getFullBackgroundColorRes()     { return android.R.color.transparent; } // return R.color.colorPrimaryDark; }

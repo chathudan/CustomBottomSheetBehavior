@@ -1,10 +1,9 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar;
 
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.NestedScrollingParent;
 import android.util.AttributeSet;
@@ -14,16 +13,17 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
 
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.EventScrollAppBarVisibility;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.Utils;
+
 
 /**
- *
+ *  Behavior applied on an AppBarLayout within a ViewPager. It delegates visibility change actions to ScrollAppBarLayout.
  */
-public class DelegatingScrollingAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBehavior {
-
-    private static final String TAG = DelegatingScrollingAppBarLayoutBehavior.class.getSimpleName();
+public class DelegatingScrollingAppBarLayoutBehavior extends DelegatingAppBarLayoutBehavior {
 
     private boolean mInit = false;
-    private Context mContext;
     private boolean mVisible = true;
     /**
      * To avoid using multiple "peekheight=" in XML and looking flexibility allowing {@link BottomSheetBehaviorGoogleMapsLike#mPeekHeight}
@@ -34,7 +34,6 @@ public class DelegatingScrollingAppBarLayoutBehavior extends AppBarLayout.Scroll
 
     public DelegatingScrollingAppBarLayoutBehavior( Context context, AttributeSet attrs ) {
         super( context, attrs );
-        mContext = context;
     }
 
     @Override
@@ -57,9 +56,11 @@ public class DelegatingScrollingAppBarLayoutBehavior extends AppBarLayout.Scroll
         if ( mBottomSheetBehaviorRef == null  ||  mBottomSheetBehaviorRef.get() == null )
             getBottomSheetBehavior( parent );
 
-        boolean appBarVisible = dependency.getY() >= dependency.getHeight() - mBottomSheetBehaviorRef.get().getPeekHeight() - getStatusBarHeight();
+        boolean appBarVisible = dependency.getY() >= dependency.getHeight() - mBottomSheetBehaviorRef.get().getPeekHeight() - Utils.getStatusBarHeight( parent.getContext() );
 
-        EventBus.getDefault().post( new EventScrollAppBarVisibility( appBarVisible, parent ) );
+        if ( publish() ) {
+            EventBus.getDefault().post( new EventScrollAppBarVisibility( appBarVisible, parent ) );
+        }
 
         return true;
     }
@@ -88,12 +89,10 @@ public class DelegatingScrollingAppBarLayoutBehavior extends AppBarLayout.Scroll
         int mCollapsedY = dependency.getHeight() - mBottomSheetBehaviorRef.get().getPeekHeight();
         mVisible = (dependency.getY() >= mCollapsedY);
 
-        if( ! mVisible ) {
-            EventBus.getDefault().post( new EventScrollAppBarVisibility( false, parent ) );
+        if ( publish() ) {
+            EventBus.getDefault().post( new EventScrollAppBarVisibility( mVisible, parent ) );
         }
-        else {
-            EventBus.getDefault().post( new EventScrollAppBarVisibility( true, parent ) );
-        }
+
         mInit = true;
         /**
          * Following {@link #onDependentViewChanged} docs, we need to return true if the
@@ -101,22 +100,6 @@ public class DelegatingScrollingAppBarLayoutBehavior extends AppBarLayout.Scroll
          * In our case we only move it if mVisible got false in this method.
          */
         return !mVisible;
-    }
-
-    private int mStatusBarHeight = 0;
-    private int getStatusBarHeight() {
-        if ( mStatusBarHeight != 0 ) {
-            return mStatusBarHeight;
-        }
-        else {
-            int result = 0;
-            int resourceId = mContext.getResources().getIdentifier( "status_bar_height", "dimen", "android" );
-            if ( resourceId > 0 ) {
-                result = mContext.getResources().getDimensionPixelSize( resourceId );
-            }
-            mStatusBarHeight = result;
-            return mStatusBarHeight;
-        }
     }
 
     /**

@@ -1,4 +1,4 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar;
 
 import android.content.Context;
 import android.os.Build;
@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.EventMergedAppBarVisibility;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
 import org.greenrobot.eventbus.EventBus;
 
@@ -21,27 +23,25 @@ import java.lang.ref.WeakReference;
 
 
 /**
- * This behavior should be applied on an AppBarLayout... More Explanations coming soon
+ * Behavior applied on an AppBarLayout within a ViewPager. It delegates visibility change actions to MergedAppBarLayout.
  */
-public class DelegatingMergedAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBehavior {
+public class DelegatingMergedAppBarLayoutBehavior extends DelegatingAppBarLayoutBehavior {
 
     private static final String TAG = DelegatingMergedAppBarLayoutBehavior.class.getSimpleName();
 
     private boolean mInit = false;
 
-    private Context mContext;
     /**
      * To avoid using multiple "peekheight=" in XML and looking flexibility allowing {@link BottomSheetBehaviorGoogleMapsLike#mPeekHeight}
      * get changed dynamically we get the {@link NestedScrollingParent} that has
      * "app:layout_behavior=" {@link BottomSheetBehaviorGoogleMapsLike} inside the {@link CoordinatorLayout}
      */
     private WeakReference<BottomSheetBehaviorGoogleMapsLike> mBottomSheetBehaviorRef;
-    private float mInitialY;
+
     private boolean mVisible = false;
 
     public DelegatingMergedAppBarLayoutBehavior( Context context, AttributeSet attrs ) {
         super( context, attrs );
-        mContext = context;
     }
 
     @Override
@@ -107,10 +107,7 @@ public class DelegatingMergedAppBarLayoutBehavior extends AppBarLayout.Scrolling
             appBarLayout.setOutlineProvider( ViewOutlineProvider.BACKGROUND );
         }
 
-        //mToolbar = (Toolbar) appBarLayout.findViewById(R.id.delegating_expanded_toolbar);
         getBottomSheetBehavior(parent);
-
-        mInitialY = child.getY();
 
         child.setVisibility(mVisible ? View.VISIBLE : View.INVISIBLE);
         mInit = true;
@@ -158,11 +155,6 @@ public class DelegatingMergedAppBarLayoutBehavior extends AppBarLayout.Scrolling
     private int toolbarTop    = 0;
     public void setToolbarBottom( int toolbarBottom ) { this.toolbarBottom = toolbarBottom; }
     public void setToolbarTop(    int toolbarTop )    { this.toolbarTop = toolbarTop; }
-
-    private BottomSheetPage mParentBottomSheetPage = null;
-    public void setParentBottomSheetPage( BottomSheetPage bottomSheetPage ) {
-        mParentBottomSheetPage = bottomSheetPage;
-    }
 
     private boolean isDependencyYBelowToolbar( @NonNull View child, @NonNull View dependency ) {
         return dependency.getY() <= toolbarBottom  &&  dependency.getY() > toolbarTop;
@@ -233,9 +225,5 @@ public class DelegatingMergedAppBarLayoutBehavior extends AppBarLayout.Scrolling
             throw new IllegalArgumentException("The view is not associated with " + "DelegatingMergedAppBarLayoutBehavior");
         }
         return (DelegatingMergedAppBarLayoutBehavior) behavior;
-    }
-
-    private boolean publish() {
-        return mParentBottomSheetPage.isSelected();
     }
 }

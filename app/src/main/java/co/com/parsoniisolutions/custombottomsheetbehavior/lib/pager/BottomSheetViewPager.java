@@ -7,6 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import java.util.Vector;
+
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
 
@@ -134,5 +136,9 @@ public class BottomSheetViewPager extends ViewPager {
         return adp.getBottomSheetAtPosition( pos );
     }
 
+    public void addBottomSheetCallback( BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback bottomSheetCallback ) {
+        BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
+        adp.addBottomSheetCallback( bottomSheetCallback );
+    }
 
 }

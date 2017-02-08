@@ -4,16 +4,15 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.DelegatingMergedAppBarLayoutBehavior;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.FloatingFrameLayout;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingMergedAppBarLayoutBehavior;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.ScrollAwareFABBehavior;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.Utils;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingScrollingAppBarLayoutBehavior;
 
 import java.lang.ref.WeakReference;
 
@@ -68,6 +67,7 @@ public class BottomSheetPage {
         setFabBehaviorParameters();
         setOnBottomSheetStateChangedListener();
         setDelegatingMergedToolbarParameters();
+        setDelegatingScrollToolbarParameters();
     }
     protected void setUI( int position ) { }
 
@@ -118,6 +118,13 @@ public class BottomSheetPage {
         DelegatingMergedAppBarLayoutBehavior behavior = (DelegatingMergedAppBarLayoutBehavior) params.getBehavior();
         behavior.setToolbarTop( Utils.getStatusBarHeight( mergedAppBar.getContext() ) );
         behavior.setToolbarBottom( Utils.getStatusBarHeight( mergedAppBar.getContext() ) + Utils.getToolbarHeight( mergedAppBar.getContext() ) );
+        behavior.setParentBottomSheetPage( this );
+    }
+
+    private void setDelegatingScrollToolbarParameters() {
+        View scrollAppBar = mInflatedView.findViewById( R.id.delegating_scroll_appbarlayout );
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) scrollAppBar.getLayoutParams();
+        DelegatingScrollingAppBarLayoutBehavior behavior = (DelegatingScrollingAppBarLayoutBehavior) params.getBehavior();
         behavior.setParentBottomSheetPage( this );
     }
 

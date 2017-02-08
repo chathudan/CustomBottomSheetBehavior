@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -58,44 +59,6 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(" ");
         }
-
-        /**
-         * If we want to listen for states callback
-         */
-        /*
-        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout);
-        View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
-        final BottomSheetBehaviorGoogleMapsLike behavior = BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
-        behavior.addBottomSheetCallback(new BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                switch (newState) {
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED:
-                        Log.d("bottomsheet-", "STATE_COLLAPSED");
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_DRAGGING:
-                        Log.d("bottomsheet-", "STATE_DRAGGING");
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED:
-                        Log.d("bottomsheet-", "STATE_EXPANDED");
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT:
-                        Log.d("bottomsheet-", "STATE_ANCHOR_POINT");
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN:
-                        Log.d("bottomsheet-", "STATE_HIDDEN");
-                        break;
-                    default:
-                        Log.d("bottomsheet-", "STATE_SETTLING");
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-            }
-        });
-*/
 
         List<MainContentPagerItem> pageList = new ArrayList<>();
         for ( int i = 1; i < 10; ++i ) {
@@ -147,16 +110,46 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged( int state ) { }
         } );
 
-        //bottomSheetTextView = (TextView) bottomSheet.findViewById(R.id.bottom_sheet_title);
-        //ItemPagerAdapter adapter = new ItemPagerAdapter(this,mDrawables);
-        //ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        //viewPager.setAdapter(adapter);
 
-        //behavior.setState( BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT );
+        /**
+         * Listen for BottomSheet callbacks
+         */
+        bottomSheetViewPager.addBottomSheetCallback( new BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
+            @Override
+            public void onStateChanged( @NonNull View bottomSheet, @BottomSheetBehaviorGoogleMapsLike.State int newState ) {
+                switch (newState) {
+                    case BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED:
+                        Log.d( "bottomsheet-", "STATE_COLLAPSED" );
+                        break;
+                    case BottomSheetBehaviorGoogleMapsLike.STATE_DRAGGING:
+                        Log.d( "bottomsheet-", "STATE_DRAGGING" );
+                        break;
+                    case BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED:
+                        Log.d( "bottomsheet-", "STATE_EXPANDED" );
+                        break;
+                    case BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT:
+                        Log.d( "bottomsheet-", "STATE_ANCHOR_POINT" );
+                        break;
+                    case BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN:
+                        Log.d( "bottomsheet-", "STATE_HIDDEN" );
+                        break;
+                    default:
+                        Log.d( "bottomsheet-", "STATE_SETTLING" );
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide( @NonNull View bottomSheet, float slideOffset ) { }
+        } );
     }
 
+
+    /**
+     * Set the initial map state
+     * @param googleMap
+     */
     private void mapReady( GoogleMap googleMap ) {
-        // Set the initial map state
         int toolbarHeight = 0;
         TypedValue tv = new TypedValue();
         if ( getTheme().resolveAttribute( android.R.attr.actionBarSize, tv, true ) ) {
