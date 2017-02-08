@@ -23,16 +23,6 @@
         android:layout_height="@dimen/anchor_point"
         app:layout_behavior="@string/BackDropBottomSheetBehavior">
 
-        <ImageView
-            android:id="@+id/static_default_photo"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:scaleType="centerCrop"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/cheese_default"
-            android:src="@color/default_photo_overlay"
-            android:visibility="visible" />
-
         <!-- Full bleed photo in the background -->
         <android.support.v4.view.ViewPager
             android:id="@+id/photos_view_pager"

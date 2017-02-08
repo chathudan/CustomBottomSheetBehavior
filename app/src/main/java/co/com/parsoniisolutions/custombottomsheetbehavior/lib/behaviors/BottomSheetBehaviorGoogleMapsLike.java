@@ -13,6 +13,7 @@ import android.support.v4.view.ViewCompat;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -297,10 +298,15 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         // it is not the top most view of its parent. This is not necessary when the touch event is
         // happening over the scrolling content as nested scrolling logic handles that case.
         View scroll = mNestedScrollingChildRef.get();
-        boolean ret = action == MotionEvent.ACTION_MOVE && scroll != null &&
-                !mIgnoreEvents && mState != STATE_DRAGGING &&
-                !parent.isPointInChildBounds(scroll, (int) event.getX(), (int) event.getY()) &&
-                Math.abs(mInitialY - event.getY()) > mViewDragHelper.getTouchSlop();
+        boolean ret =
+                        action == MotionEvent.ACTION_MOVE  &&  scroll != null  &&
+                        ! mIgnoreEvents &&
+                        mState != STATE_DRAGGING &&
+                        ! parent.isPointInChildBounds(scroll, (int) event.getX(), (int) event.getY()) &&
+                        Math.abs(mInitialY - event.getY()) > mViewDragHelper.getTouchSlop();
+        if ( ret == true ) {
+            Log.e("e","intercepting");
+        }
         return ret;
     }
 
@@ -332,6 +338,11 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                 mViewDragHelper.captureChildView( child, event.getPointerId(event.getActionIndex()) );
             }
         }
+
+        if ( ! mIgnoreEvents ) {
+            Log.e("e","not ignoring!");
+        }
+
         return ! mIgnoreEvents;
     }
 

@@ -1,13 +1,5 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.sample;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
@@ -17,6 +9,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
             else
             if ( i == 3 ) {
                 drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_5 ); }};
+            }
+            else {
+                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_default ); }};
             }
 
             MainContentPagerItem item = new MainContentPagerItem( "Title " + i, "Description " + i, drawableList );
