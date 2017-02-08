@@ -1,4 +1,4 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,7 +10,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.SlopSupportingNestedScrollView;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;

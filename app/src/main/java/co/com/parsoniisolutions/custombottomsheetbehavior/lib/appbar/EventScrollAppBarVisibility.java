@@ -1,4 +1,4 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar;
 
 import android.support.design.widget.CoordinatorLayout;
 

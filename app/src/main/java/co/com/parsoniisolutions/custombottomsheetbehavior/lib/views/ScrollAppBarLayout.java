@@ -1,4 +1,4 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.views;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.EventBusException;
@@ -9,19 +9,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.support.annotation.ColorRes;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewPropertyAnimator;
-import android.widget.RelativeLayout;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.EventScrollAppBarVisibility;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 
 
 /**
@@ -64,7 +58,7 @@ public class ScrollAppBarLayout extends android.support.design.widget.AppBarLayo
 
         if ( mAppBarYValueAnimator == null  ||  mScrollingAppBarVisible != visible ) {
             int curY = (int) getY();
-            int newY = visible ? Utils.getStatusBarHeight( getContext() ) : -getHeight();
+            int newY = visible ? DimensionUtils.getStatusBarHeight( getContext() ) : -getHeight();
 
             mAppBarYValueAnimator = ValueAnimator.ofFloat( curY, newY );
 

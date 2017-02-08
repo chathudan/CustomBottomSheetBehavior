@@ -6,5 +6,4 @@ public interface ScrollVelocityTrackerIf {
 
     float getScrollVelocity();
     int   getTotalScrollDistancePx();
-    int   getCurrentScrollY();
 }

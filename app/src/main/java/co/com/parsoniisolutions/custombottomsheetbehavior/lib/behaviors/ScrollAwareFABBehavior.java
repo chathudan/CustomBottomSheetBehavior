@@ -1,19 +1,16 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.SlopSupportingNestedScrollView;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView;
 import android.util.AttributeSet;
 import android.view.View;
 
 import java.lang.ref.WeakReference;
-
-import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 
 /**
  ~ Licensed under the Apache License, Version 2.0 (the "License");

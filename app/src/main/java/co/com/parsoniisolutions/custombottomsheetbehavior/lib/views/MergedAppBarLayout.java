@@ -1,4 +1,4 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.views;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.EventBusException;
@@ -18,6 +18,7 @@ import android.view.ViewPropertyAnimator;
 import android.widget.RelativeLayout;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.EventMergedAppBarVisibility;
 
 
 /**

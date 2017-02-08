@@ -8,10 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingMergedAppBarLayoutBehavior;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.ScrollAwareFABBehavior;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.Utils;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.ScrollAwareFABBehavior;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingScrollingAppBarLayoutBehavior;
 
 import java.lang.ref.WeakReference;
@@ -104,7 +104,7 @@ public class BottomSheetPage {
 
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ffl.getLayoutParams();
             ScrollAwareFABBehavior behavior = (ScrollAwareFABBehavior)params.getBehavior();
-            behavior.setOffsetValue( Utils.getToolbarHeight(ffl.getContext()) + fabHeight / 2 );
+            behavior.setOffsetValue( DimensionUtils.getToolbarHeight(ffl.getContext()) + fabHeight / 2 );
             //behavior.setHideTopOffsetPx( toolbarHeight + fabHeight / 2 );
             //behavior.setHideBottomOffsetPx( toolbarHeight );//+ (int)(6 * MainActivity.sDensity) );
             //ffl.setAnimateSize( true );
@@ -116,8 +116,8 @@ public class BottomSheetPage {
         View mergedAppBar = mInflatedView.findViewById( R.id.delegating_merged_appbarlayout );
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mergedAppBar.getLayoutParams();
         DelegatingMergedAppBarLayoutBehavior behavior = (DelegatingMergedAppBarLayoutBehavior) params.getBehavior();
-        behavior.setToolbarTop( Utils.getStatusBarHeight( mergedAppBar.getContext() ) );
-        behavior.setToolbarBottom( Utils.getStatusBarHeight( mergedAppBar.getContext() ) + Utils.getToolbarHeight( mergedAppBar.getContext() ) );
+        behavior.setToolbarTop( DimensionUtils.getStatusBarHeight( mergedAppBar.getContext() ) );
+        behavior.setToolbarBottom( DimensionUtils.getStatusBarHeight( mergedAppBar.getContext() ) + DimensionUtils.getToolbarHeight( mergedAppBar.getContext() ) );
         behavior.setParentBottomSheetPage( this );
     }
 

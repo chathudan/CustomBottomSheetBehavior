@@ -14,14 +14,14 @@
         android:layout_height="0px"
         android:theme="@style/AppTheme.AppBarOverlayLight"
         android:background="#0000"
-        app:layout_behavior="co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingScrollingAppBarLayoutBehavior">
+        app:layout_behavior="@string/DelegatingScrollingAppBarLayoutBehavior">
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="@dimen/anchor_point"
-        app:layout_behavior="co.com.parsoniisolutions.custombottomsheetbehavior.lib.BackdropBottomSheetBehavior">
+        app:layout_behavior="@string/BackDropBottomSheetBehavior">
 
         <ImageView
             android:id="@+id/static_default_photo"
@@ -51,15 +51,15 @@
         app:layout_anchorGravity="top"
         android:layout_width="match_parent"
         android:layout_height="6dp"
-        android:background="@drawable/gradient_shadow" />
+        android:background="@drawable/bottomsheet_shadow" />
 
-    <android.support.v4.widget.SlopSupportingNestedScrollView
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
-        app:layout_behavior="co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike"
+        app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
         app:anchorPoint="@dimen/anchor_point"
         app:behavior_hideable="true">
 
@@ -68,7 +68,7 @@
             layout="@layout/bottom_sheet_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </android.support.v4.widget.SlopSupportingNestedScrollView>
+    </co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -89,7 +89,7 @@
         android:background="@android:color/transparent"
         android:theme="@style/AppTheme.AppBarOverlayDark"
         android:tag="modal-appbar"
-        app:layout_behavior="co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingMergedAppBarLayoutBehavior" >
+        app:layout_behavior="@string/DelegatingMergedAppBarLayoutBehavior" >
 
         <FrameLayout
             android:layout_width="match_parent"

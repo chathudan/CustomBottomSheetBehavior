@@ -10,7 +10,7 @@
     tools:context=".sample.MainActivity">
 
     <!-- Toolbar on map when bottom sheet is collapsed or hidden -->
-    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.ScrollAppBarLayout
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.ScrollAppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_search_grey600_24dp" />
 
-    </co.com.parsoniisolutions.custombottomsheetbehavior.lib.ScrollAppBarLayout>
+    </co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.ScrollAppBarLayout>
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"/>
 
     <!-- Toolbar visible on detail screen -->
-    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.MergedAppBarLayout
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout
         android:id="@+id/merged_appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_sheet_peek_height"
@@ -91,5 +91,5 @@
 
             </RelativeLayout>
         </FrameLayout>
-    </co.com.parsoniisolutions.custombottomsheetbehavior.lib.MergedAppBarLayout>
+    </co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout>
 </android.support.design.widget.CoordinatorLayout>

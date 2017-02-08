@@ -10,7 +10,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,10 +21,10 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.MergedAppBarLayout;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.Utils;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
 
 
@@ -156,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             toolbarHeight = TypedValue.complexToDimensionPixelSize( tv.data, getResources().getDisplayMetrics() );
         }
 
-        googleMap.setPadding( 0, toolbarHeight + Utils.getStatusBarHeight( this ), 0, 0 );
+        googleMap.setPadding( 0, toolbarHeight + DimensionUtils.getStatusBarHeight( this ), 0, 0 );
 
         googleMap.getUiSettings().setCompassEnabled( true );
         googleMap.getUiSettings().setMyLocationButtonEnabled( true );

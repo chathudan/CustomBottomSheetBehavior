@@ -7,10 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import java.util.Vector;
-
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 
 
 public class BottomSheetViewPager extends ViewPager {

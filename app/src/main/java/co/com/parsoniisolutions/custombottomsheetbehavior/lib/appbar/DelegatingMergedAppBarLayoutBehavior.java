@@ -14,9 +14,8 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.EventMergedAppBarVisibility;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;

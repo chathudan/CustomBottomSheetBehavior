@@ -51,5 +51,4 @@ public class ScrollVelocityTracker implements ScrollVelocityTrackerIf {
 
     public float getScrollVelocity()        { return mScrollVelocity; }
     public int   getTotalScrollDistancePx() { return mTotalScrollDistancePx; }
-    public int   getCurrentScrollY()        { return mCurrentScrollY; }
 }

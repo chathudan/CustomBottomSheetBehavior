@@ -2,9 +2,7 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +12,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 
 
 public abstract class BottomSheetPagerAdapter extends PagerAdapter {

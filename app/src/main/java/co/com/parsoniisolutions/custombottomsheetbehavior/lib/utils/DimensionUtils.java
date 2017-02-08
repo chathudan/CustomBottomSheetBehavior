@@ -1,11 +1,11 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils;
 
 import android.content.Context;
 import android.util.Log;
 import android.util.TypedValue;
 
 
-public class Utils {
+public class DimensionUtils {
 
     private static int mStatusBarHeight = -1;
     public static int getStatusBarHeight( Context context ) {

@@ -13,9 +13,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
 
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.EventScrollAppBarVisibility;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.Utils;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 
 
 /**
@@ -56,7 +55,7 @@ public class DelegatingScrollingAppBarLayoutBehavior extends DelegatingAppBarLay
         if ( mBottomSheetBehaviorRef == null  ||  mBottomSheetBehaviorRef.get() == null )
             getBottomSheetBehavior( parent );
 
-        boolean appBarVisible = dependency.getY() >= dependency.getHeight() - mBottomSheetBehaviorRef.get().getPeekHeight() - Utils.getStatusBarHeight( parent.getContext() );
+        boolean appBarVisible = dependency.getY() >= dependency.getHeight() - mBottomSheetBehaviorRef.get().getPeekHeight() - DimensionUtils.getStatusBarHeight( parent.getContext() );
 
         if ( publish() ) {
             EventBus.getDefault().post( new EventScrollAppBarVisibility( appBarVisible, parent ) );

@@ -1,4 +1,4 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
