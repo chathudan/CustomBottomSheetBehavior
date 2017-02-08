@@ -47,7 +47,6 @@ public class MainActivitySimple extends AppCompatActivity {
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-
         mapView.getMapAsync( new OnMapReadyCallback() {
             @Override
             public void onMapReady( GoogleMap googleMap ) {
@@ -55,14 +54,7 @@ public class MainActivitySimple extends AppCompatActivity {
             }
         } );
 
-        Toolbar toolbar = (Toolbar) findViewById( R.id.scrolltoolbar );
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(" ");
-        }
-
+        // Let's create some dummy data
         List<CheeseData> pageList = new ArrayList<>();
         for ( int i = 1; i < 8; ++i ) {
             List<Integer> drawableList;
@@ -89,10 +81,10 @@ public class MainActivitySimple extends AppCompatActivity {
         BottomSheetPagerAdapterCheeseSimple adapter = new BottomSheetPagerAdapterCheeseSimple( pageList );
         final BottomSheetViewPager bottomSheetViewPager = (BottomSheetViewPager) findViewById( R.id.view_pager_main_content );
         bottomSheetViewPager.setAdapter( adapter );
-        bottomSheetViewPager.setOffscreenPageLimit( 0 );
+        bottomSheetViewPager.setOffscreenPageLimit( 0 ); // Set to zero for demo to illustrate the ViewPager View recycling. Will probably want a larger value in production.
         bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT, false );
 
-        MergedAppBarLayout mergedAppBarLayout = (MergedAppBarLayout) findViewById(R.id.merged_appbarlayout);
+        MergedAppBarLayout mergedAppBarLayout = (MergedAppBarLayout) findViewById( R.id.merged_appbarlayout );
         mergedAppBarLayout.setNavigationOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick( View v ) {
