@@ -37,7 +37,6 @@ public class BottomSheetViewPager extends ViewPager {
     private OnPageChangeListener mOnPageChangeListener = new OnPageChangeListener() {
         @Override
         public void onPageSelected( final int position ) {
-            // Scroll the map and show the infowindow for this point
             BottomSheetPagerAdapter adapter = (BottomSheetPagerAdapter)getAdapter();
             adapter.onPageSelected( position );
         }

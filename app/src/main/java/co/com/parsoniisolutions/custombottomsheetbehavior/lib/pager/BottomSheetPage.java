@@ -11,7 +11,6 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingMergedAppBarLayoutBehavior;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.ScrollAwareFABBehavior;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetData;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingScrollingAppBarLayoutBehavior;
 
@@ -46,7 +45,7 @@ public class BottomSheetPage {
         setUI( bottomSheetData );
     }
 
-    private WeakReference<BottomSheetPagerAdapter> mPagerAdapterRef;
+    protected WeakReference<BottomSheetPagerAdapter> mPagerAdapterRef;
     protected BottomSheetPagerAdapter pagerAdapter() { return mPagerAdapterRef.get(); }
 
     //private   View mFabFloatingFrameLayout;

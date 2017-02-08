@@ -5,15 +5,10 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetData;
-import co.com.parsoniisolutions.custombottomsheetbehavior.sample.CheeseData;
-import co.com.parsoniisolutions.custombottomsheetbehavior.sample.withloading.BottomSheetPagerAdapterCheeseWithLoading;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
 import co.com.parsoniisolutions.custombottomsheetbehavior.sample.PhotosPagerAdapter;
 
 

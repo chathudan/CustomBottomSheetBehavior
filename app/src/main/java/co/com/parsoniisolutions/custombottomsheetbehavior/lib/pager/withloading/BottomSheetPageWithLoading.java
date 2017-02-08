@@ -23,8 +23,12 @@ public class BottomSheetPageWithLoading extends BottomSheetPage {
         // Ask for new data asynchronously
         getBottomSheetDataAsync( position, new OnBottomSheetDataLoadedCallback() {
             @Override
-            public void onDataLoaded( BottomSheetData bottomSheetData ) {
-                setUI( bottomSheetData );
+            public void onDataLoaded( BottomSheetDataWithLoading bottomSheetData ) {
+                // Are we still viewing the same object? If not, ignore this load
+                BottomSheetPagerAdapterWithLoading adp = (BottomSheetPagerAdapterWithLoading) mPagerAdapterRef.get();
+                if ( adp != null && adp.getIdAtPosition( mPosition ) == bottomSheetData.getId() ) {
+                    setUI( bottomSheetData );
+                }
             }
         } );
     }
@@ -32,7 +36,7 @@ public class BottomSheetPageWithLoading extends BottomSheetPage {
     public void setUILoading() { throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override setUILoading()" ); }
 
     public interface OnBottomSheetDataLoadedCallback {
-        void onDataLoaded( BottomSheetData bottomSheetData );
+        void onDataLoaded( BottomSheetDataWithLoading bottomSheetData );
     }
     protected void getBottomSheetDataAsync( int position, OnBottomSheetDataLoadedCallback cb ) {
         throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override getBottomSheetDataAsync()" );

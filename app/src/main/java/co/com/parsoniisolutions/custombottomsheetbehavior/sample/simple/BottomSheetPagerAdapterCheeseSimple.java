@@ -7,7 +7,6 @@ import java.util.List;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
-import co.com.parsoniisolutions.custombottomsheetbehavior.sample.CheeseData;
 
 
 public class BottomSheetPagerAdapterCheeseSimple extends BottomSheetPagerAdapter {
@@ -29,7 +28,6 @@ public class BottomSheetPagerAdapterCheeseSimple extends BottomSheetPagerAdapter
 
     @Override
     public boolean isViewFromObject( View view, Object object ) { return view == object; }
-
 
     @Override
     public BottomSheetPage createNewPage( LayoutInflater inflater ) {

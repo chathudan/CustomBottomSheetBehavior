@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetDataWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetData;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetPageWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.sample.PhotosPagerAdapter;
-import co.com.parsoniisolutions.custombottomsheetbehavior.sample.CheeseData;
 
 
 public class BottomSheetPageCheeseWithLoading extends BottomSheetPageWithLoading {
@@ -42,7 +41,7 @@ public class BottomSheetPageCheeseWithLoading extends BottomSheetPageWithLoading
 
     @Override
     public void setUI( BottomSheetData bottomSheetData ) {
-        CheeseData cheeseData = (CheeseData) bottomSheetData;
+        GeoCheeseData cheeseData = (GeoCheeseData) bottomSheetData;
         mTitle.setText( cheeseData.getTitle() );
         mSubTitle.setText( cheeseData.getSubTitle() );
 
@@ -63,24 +62,24 @@ public class BottomSheetPageCheeseWithLoading extends BottomSheetPageWithLoading
     @Override
     protected void getBottomSheetDataAsync( final int position, final OnBottomSheetDataLoadedCallback cb ) {
         // Load the data asynchronously ...
-        AsyncTask<Void,Void,BottomSheetData> loadDataAsyncTask = new AsyncTask<Void, Void, BottomSheetData>() {
+        AsyncTask<Void,Void,BottomSheetDataWithLoading> loadDataAsyncTask = new AsyncTask<Void, Void, BottomSheetDataWithLoading>() {
             @Override
-            protected BottomSheetData doInBackground( Void... params ) {
+            protected BottomSheetDataWithLoading doInBackground( Void... params ) {
                 // Simulate a longer loading time
                 try {
-                    Thread.sleep( 4000 );
+                    Thread.sleep( 1500 );
                 } catch ( InterruptedException e ) { }
 
                 BottomSheetPagerAdapterCheeseWithLoading adapter = (BottomSheetPagerAdapterCheeseWithLoading)pagerAdapter();
                 if ( adapter == null )
                     return null;
-                CheeseData item = adapter.getItemAtPosition( position );
+                GeoCheeseData item = adapter.getItemAtPosition( position );
                 return item;
                 //cb.onDataLoaded( item );
             }
 
             @Override
-            protected void onPostExecute( BottomSheetData bottomSheetData ) {
+            protected void onPostExecute( BottomSheetDataWithLoading bottomSheetData ) {
                 cb.onDataLoaded( bottomSheetData );
             }
         };

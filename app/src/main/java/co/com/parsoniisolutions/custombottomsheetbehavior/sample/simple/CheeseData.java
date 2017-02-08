@@ -1,6 +1,6 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.sample;
+package co.com.parsoniisolutions.custombottomsheetbehavior.sample.simple;
 
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetData;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
 
 import java.util.List;
 

@@ -62,8 +62,6 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
 
     public abstract BottomSheetPage createNewPage( LayoutInflater inflater );
 
-
-
     private Vector<BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback> mBottomSheetStateCallbacks;
     public void addBottomSheetCallback( BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback bottomSheetCallback ) {
         if ( mBottomSheetStateCallbacks == null ) {

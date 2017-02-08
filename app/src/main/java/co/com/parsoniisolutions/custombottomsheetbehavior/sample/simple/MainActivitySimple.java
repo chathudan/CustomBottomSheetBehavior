@@ -3,9 +3,7 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.sample.simple;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -15,7 +13,6 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSh
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout;
-import co.com.parsoniisolutions.custombottomsheetbehavior.sample.CheeseData;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

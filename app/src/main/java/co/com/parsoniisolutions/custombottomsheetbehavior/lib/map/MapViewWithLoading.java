@@ -2,17 +2,24 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.lib.map;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetPagerAdapterWithLoading;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetViewPagerWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventMapCameraState;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
-
 import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventMapCameraState.State.CANCEL;
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventMapCameraState.State.FINISH;
@@ -35,8 +42,37 @@ public class MapViewWithLoading extends MapView {
             public void onMapReady( GoogleMap googleMap ) {
                 mGoogleMap = googleMap;
                 mGoogleMap.setPadding( 0, topPadding, 0, 0 );
+                mGoogleMap.setOnMarkerClickListener( new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick( Marker marker ) {
+                        scrollBottomSheetPagerToMarker( marker );
+                        return false;
+                    }
+                } );
             }
         } );
+    }
+
+    private void scrollBottomSheetPagerToMarker( Marker marker ) {
+        // Scroll the view pager to this marker
+        GoogleMapMarkerData googleMapMarkerData = findGoogleMapMarkerData( marker );
+        if ( googleMapMarkerData == null ) {
+            return;
+        }
+
+        long id = googleMapMarkerData.getId();
+
+        if ( mBottomSheetViewPagerWithLoading == null ) {
+            return;
+        }
+
+        mBottomSheetViewPagerWithLoading.scrollToId( id, true );
+
+    }
+
+    private BottomSheetViewPagerWithLoading mBottomSheetViewPagerWithLoading = null;
+    public void setBottomSheetViewPagerWithLoading( BottomSheetViewPagerWithLoading pager ) {
+        mBottomSheetViewPagerWithLoading = pager;
     }
 
     public void animateCameraWithEvents( CameraUpdate cameraUpdate ) {
@@ -54,5 +90,31 @@ public class MapViewWithLoading extends MapView {
                 }
             } );
         }
+    }
+
+    private ConcurrentHashMap<Long, GoogleMapMarkerData> mAddedMarkers = new ConcurrentHashMap<>();
+
+    // Add a marker to the map and remember it
+    public void addMarker( long id, MarkerOptions mo ) {
+        Marker marker = mGoogleMap.addMarker( mo );
+        GoogleMapMarkerData googleMapMarkerData = new GoogleMapMarkerData( id, marker, mo );
+        mAddedMarkers.put( id, googleMapMarkerData );
+    }
+
+    private GoogleMapMarkerData findGoogleMapMarkerData( Marker marker ) {
+        for ( GoogleMapMarkerData googleMapMarkerData : mAddedMarkers.values() ) {
+            if ( googleMapMarkerData.getMarker().equals( marker ) ) {
+                return googleMapMarkerData;
+            }
+        }
+        return null;
+    }
+
+    public void animateCameraToId( long id ) {
+        GoogleMapMarkerData googleMapMarkerData = mAddedMarkers.get( id );
+        if ( googleMapMarkerData == null )
+            return;
+        googleMapMarkerData.getMarker().showInfoWindow();
+        animateCameraWithEvents( CameraUpdateFactory.newLatLng( googleMapMarkerData.getPosition() ) );
     }
 }

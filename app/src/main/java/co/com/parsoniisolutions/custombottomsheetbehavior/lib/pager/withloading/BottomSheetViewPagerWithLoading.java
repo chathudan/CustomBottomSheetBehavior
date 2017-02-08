@@ -3,6 +3,7 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading
 import android.content.Context;
 import android.util.AttributeSet;
 
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
 
 
@@ -20,5 +21,13 @@ public class BottomSheetViewPagerWithLoading extends BottomSheetViewPager {
         mViewPagerContentRefresher.addTask( bottomSheetPage, bottomSheetData );
     }
 
+
+    public void scrollToId( long id, boolean animate ) {
+        BottomSheetPagerAdapterWithLoading adapter = (BottomSheetPagerAdapterWithLoading) getAdapter();
+        if ( adapter == null )
+            return;
+        int position = adapter.getPositionForId( id );
+        setCurrentItem( position, animate );
+    }
 
 }

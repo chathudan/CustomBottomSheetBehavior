@@ -2,6 +2,7 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading
 
 import android.support.v4.view.ViewPager;
 
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.EventBusException;

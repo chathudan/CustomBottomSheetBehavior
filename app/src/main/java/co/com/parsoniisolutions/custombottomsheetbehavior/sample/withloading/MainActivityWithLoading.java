@@ -7,6 +7,8 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,8 +26,10 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.map.MapViewWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetViewPagerWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout;
-import co.com.parsoniisolutions.custombottomsheetbehavior.sample.CheeseData;
+
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetDataWithLoading.LocationType.POINT;
 
 
 /**
@@ -37,7 +41,7 @@ public class MainActivityWithLoading extends AppCompatActivity {
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
         setContentView( R.layout.activity_main_with_loading );
-        MapView mapView = (MapView)findViewById( R.id.map );
+        MapViewWithLoading mapView = (MapViewWithLoading) findViewById( R.id.map );
         mapView.onCreate( null ); // Was getting weird exceptions if passed bundle: java.lang.RuntimeException: Unable to start activity
         mapView.onResume(); // needed to get the map to display immediately
 
@@ -62,34 +66,17 @@ public class MainActivityWithLoading extends AppCompatActivity {
             actionBar.setTitle(" ");
         }
 
-        List<CheeseData> pageList = new ArrayList<>();
-        for ( int i = 1; i < 10; ++i ) {
-            List<Integer> drawableList;
-            if ( i == 1 ) {
-                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_1 ); add( R.drawable.cheese_2 );}};
-            }
-            else
-            if ( i == 2 ) {
-                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_3 ); }};
-            }
-            else
-            if ( i == 3 ) {
-                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_4 ); }};
-            }
-            else {
-                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_default ); }};
-            }
+        List<GeoCheeseData> data = getCheeseData();
 
-            CheeseData item = new CheeseData( "Title " + i, "Description " + i, drawableList );
-
-            pageList.add( item );
-        }
-
-        BottomSheetPagerAdapterCheeseWithLoading adapter = new BottomSheetPagerAdapterCheeseWithLoading( pageList );
-        final BottomSheetViewPager bottomSheetViewPager = (BottomSheetViewPager) findViewById( R.id.view_pager_main_content );
+        BottomSheetPagerAdapterCheeseWithLoading adapter = new BottomSheetPagerAdapterCheeseWithLoading( data );
+        final BottomSheetViewPagerWithLoading bottomSheetViewPager = (BottomSheetViewPagerWithLoading) findViewById( R.id.view_pager_main_content );
         bottomSheetViewPager.setAdapter( adapter );
         bottomSheetViewPager.setOffscreenPageLimit( 0 );
         bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT, false );
+
+        // Link the adapter and the map
+        mapView.setBottomSheetViewPagerWithLoading( bottomSheetViewPager );
+        adapter.setMapView( mapView );
 
         MergedAppBarLayout mergedAppBarLayout = (MergedAppBarLayout) findViewById(R.id.merged_appbarlayout);
         mergedAppBarLayout.setNavigationOnClickListener( new View.OnClickListener() {
@@ -168,6 +155,55 @@ public class MainActivityWithLoading extends AppCompatActivity {
 
         MapViewWithLoading mapView = (MapViewWithLoading) findViewById( R.id.map );
         mapView.animateCameraWithEvents( CameraUpdateFactory.newCameraPosition( cameraPosition ) );
+
+        // Add some markers to the map
+        List<GeoCheeseData> geoCheeseDataList = getCheeseData();
+        for ( GeoCheeseData item : geoCheeseDataList ) {
+            MarkerOptions mo = new MarkerOptions()
+                    .title( item.getTitle() )
+                    .snippet( item.getSubTitle() )
+                    .position( new LatLng( 1e-6*item.getLate6(), 1e-6*item.getLone6() ) );
+            mapView.addMarker( item.getId(), mo );
+        }
     }
 
+
+    // Let's create some dummy data
+    private List<GeoCheeseData> getCheeseData() {
+        List<GeoCheeseData> data = new ArrayList<>();
+        for ( int i = 1; i < 8; ++i ) {
+            List<Integer> imageResList;
+            if ( i == 1 ) {
+                imageResList = new ArrayList<Integer>() {{ add( R.drawable.cheese_1 ); add( R.drawable.cheese_2 );}};
+            }
+            else
+            if ( i == 2 ) {
+                imageResList = new ArrayList<Integer>() {{ add( R.drawable.cheese_3 ); add( R.drawable.cheese_4 ); add( R.drawable.cheese_5 ); }};
+            }
+            else
+            if ( i == 3 ) {
+                imageResList = new ArrayList<Integer>() {{ add( R.drawable.cheese_6 ); }};
+            }
+            else {
+                imageResList = new ArrayList<Integer>() {{ add( R.drawable.cheese_default ); }};
+            }
+
+            GeoCheeseData item = (GeoCheeseData)new GeoCheeseData.Builder()
+
+                    .setTitle( "Title " + i )
+                    .setSubTitle( "Description " + i )
+                    .setImageResourceList( imageResList )
+
+                    .setId( i )
+                    .setLocationType( POINT )
+                    .setLate6( (int)(1e6*(32+Math.random()*14)) )
+                    .setLone6( (int)(1e6*(-108 - Math.random()*18)) )
+
+                    .build();
+
+            data.add( item );
+        }
+
+        return data;
+    }
 }

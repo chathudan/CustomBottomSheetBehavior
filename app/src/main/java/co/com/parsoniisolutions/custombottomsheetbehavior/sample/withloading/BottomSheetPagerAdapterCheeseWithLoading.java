@@ -5,17 +5,18 @@ import android.view.View;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
-import co.com.parsoniisolutions.custombottomsheetbehavior.sample.CheeseData;
-import co.com.parsoniisolutions.custombottomsheetbehavior.sample.simple.BottomSheetPageCheeseSimple;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetDataWithLoading;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetPagerAdapterWithLoading;
+import co.com.parsoniisolutions.custombottomsheetbehavior.sample.simple.CheeseData;
 
 import java.util.List;
 
 
-public class BottomSheetPagerAdapterCheeseWithLoading extends BottomSheetPagerAdapter {
+public class BottomSheetPagerAdapterCheeseWithLoading extends BottomSheetPagerAdapterWithLoading {
 
-    List<CheeseData> mMainContentPagerItems;
+    List<GeoCheeseData> mMainContentPagerItems;
 
-    public BottomSheetPagerAdapterCheeseWithLoading( List<CheeseData> mainContentPagerItems ) {
+    public BottomSheetPagerAdapterCheeseWithLoading( List<GeoCheeseData> mainContentPagerItems ) {
         mMainContentPagerItems = mainContentPagerItems;
     }
 
@@ -24,7 +25,7 @@ public class BottomSheetPagerAdapterCheeseWithLoading extends BottomSheetPagerAd
         return mMainContentPagerItems.size();
     }
 
-    public CheeseData getItemAtPosition( int position ) {
+    public GeoCheeseData getItemAtPosition( int position ) {
         return mMainContentPagerItems.get( position );
     }
 
@@ -37,4 +38,19 @@ public class BottomSheetPagerAdapterCheeseWithLoading extends BottomSheetPagerAd
         return new BottomSheetPageCheeseWithLoading( inflater, this );
     }
 
+    @Override
+    public long getIdAtPosition( int position ) {
+        return mMainContentPagerItems.get( position ).getId();
+    }
+
+    @Override
+    public int getPositionForId( long id ) {
+        for ( int pos = 0, size = mMainContentPagerItems.size(); pos < size; ++ pos ) {
+            BottomSheetDataWithLoading item = mMainContentPagerItems.get( pos );
+            if ( item.getId() == id ) {
+                return pos;
+            }
+        }
+        return -1;
+    }
 }
