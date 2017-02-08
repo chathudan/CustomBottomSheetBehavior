@@ -18,11 +18,11 @@
                 android:value="AIzaSyCXBlAxBBS7y1qtJLFVzwejz7VblxhkdWA" /> <!-- Your API key goes here -->
 
         <activity
-            android:name=".sample.withloading.MainActivityWithLoading"
+            android:name=".sample.simple.MainActivitySimple"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-
             <!-- android:name=".sample.simple.MainActivitySimple" -->
+            <!-- android:name=".sample.withloading.MainActivityWithLoading" -->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

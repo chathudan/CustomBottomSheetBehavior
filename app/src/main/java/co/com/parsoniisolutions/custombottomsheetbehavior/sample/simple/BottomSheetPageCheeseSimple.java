@@ -5,6 +5,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
@@ -38,8 +41,6 @@ public class BottomSheetPageCheeseSimple extends BottomSheetPage {
 
     @Override
     public void setUI( BottomSheetData bottomSheetData ) {
-        super.setUI( bottomSheetData );
-
         CheeseData cheeseData = (CheeseData) bottomSheetData;
         mTitle.setText( cheeseData.getTitle() );
         mSubTitle.setText( cheeseData.getSubTitle() );
@@ -49,13 +50,13 @@ public class BottomSheetPageCheeseSimple extends BottomSheetPage {
     }
 
     @Override
-    protected void getBottomSheetDataAsync( int position, OnBottomSheetDataLoadedCallback cb ) {
-        // In the simplest case, if you are able to return data quickly, you can just proceed on the UI thread
+    protected BottomSheetData getBottomSheetData( int position ) {
+        // Return the data for a pager position on UI thread
         BottomSheetPagerAdapterCheeseSimple adapter = (BottomSheetPagerAdapterCheeseSimple) pagerAdapter();
         if ( adapter == null )
-            return;
+            return null;
         CheeseData item = adapter.getItemAtPosition( position );
-        cb.onDataLoaded( item );
+        return item;
     }
 
 }

@@ -37,17 +37,13 @@ public class BottomSheetPage {
 
     public @LayoutRes int layoutRes() { throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override layoutRes()" ); }
 
-    private int mPosition = -1;
-    void setNewAdapterPosition( int position ) {
+    protected int mPosition = -1;
+    protected void setNewAdapterPosition( int position ) {
         mPosition = position;
-        setUILoading();
-        // Ask for new data asynchronously
-        getBottomSheetDataAsync( position, new OnBottomSheetDataLoadedCallback() {
-            @Override
-            public void onDataLoaded( BottomSheetData bottomSheetData ) {
-                setUI( bottomSheetData );
-            }
-        } );
+
+        // Ask for new data synchronously
+        BottomSheetData bottomSheetData = getBottomSheetData( position );
+        setUI( bottomSheetData );
     }
 
     private WeakReference<BottomSheetPagerAdapter> mPagerAdapterRef;
@@ -77,7 +73,6 @@ public class BottomSheetPage {
     }
 
     public void setUI( BottomSheetData bottomSheetData ) { throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override setUI()" ); }
-    public void setUILoading() { throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override setUILoading()" ); }
 
     /**
      * Close any database cursors or perform any other cleanup necessary
@@ -143,10 +138,7 @@ public class BottomSheetPage {
         return mPagerAdapterRef.get().selectedPosition() == mPosition;
     }
 
-    public interface OnBottomSheetDataLoadedCallback {
-        void onDataLoaded( BottomSheetData bottomSheetData );
-    }
-    protected void getBottomSheetDataAsync( int position, OnBottomSheetDataLoadedCallback cb ) {
-        throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override getBottomSheetDataAsync()" );
+    protected BottomSheetData getBottomSheetData( int position ) {
+        throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override getBottomSheetData()" );
     }
 }

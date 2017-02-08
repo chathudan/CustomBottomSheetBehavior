@@ -16,9 +16,26 @@ public class BottomSheetPageWithLoading extends BottomSheetPage {
         super( inflater, bottomSheetPagerAdapter );
     }
 
-    //@Override
-    //protected void getBottomSheetDataAsync();
+    @Override
+    protected void setNewAdapterPosition( int position ) {
+        mPosition = position;
+        setUILoading();
+        // Ask for new data asynchronously
+        getBottomSheetDataAsync( position, new OnBottomSheetDataLoadedCallback() {
+            @Override
+            public void onDataLoaded( BottomSheetData bottomSheetData ) {
+                setUI( bottomSheetData );
+            }
+        } );
+    }
 
-    // Subclass needs to implement this
-    //public void processLoadedData( BottomSheetData bottomSheetData ) { }
+    public void setUILoading() { throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override setUILoading()" ); }
+
+    public interface OnBottomSheetDataLoadedCallback {
+        void onDataLoaded( BottomSheetData bottomSheetData );
+    }
+    protected void getBottomSheetDataAsync( int position, OnBottomSheetDataLoadedCallback cb ) {
+        throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override getBottomSheetDataAsync()" );
+    }
+
 }
