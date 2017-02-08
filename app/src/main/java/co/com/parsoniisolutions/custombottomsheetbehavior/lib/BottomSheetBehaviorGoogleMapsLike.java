@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -320,12 +321,15 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             reset();
         }
 
+        mViewDragHelper.processTouchEvent( event );
+
         // The ViewDragHelper tries to capture only the top-most View. We have to explicitly tell it
         // to capture the bottom sheet in case it is not captured and the touch slop is passed.
         if ( action == MotionEvent.ACTION_MOVE  &&  ! mIgnoreEvents ) {
             if ( Math.abs(mInitialY - event.getY()) > mViewDragHelper.getTouchSlop() ) {
-                //mViewDragHelper.processTouchEvent( event );
-                //mViewDragHelper.captureChildView( child, event.getPointerId(event.getActionIndex()) );
+                //View grab = ((ViewGroup)child).getChildAt( 0 );
+                //Log.e("e","Grabbing " + grab);
+                mViewDragHelper.captureChildView( child, event.getPointerId(event.getActionIndex()) );
             }
         }
         return ! mIgnoreEvents;
@@ -868,11 +872,34 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                 top = mMinOffset;
                 targetState = STATE_EXPANDED;
             }
-            else
-            if ( mHideable  &&  shouldHide( releasedChild, yvel ) ) { // Clicking on collapsed should move up to anchor state
-                top = mAnchorPoint;
-                targetState = STATE_ANCHOR_POINT;
+            else {
+                Log.e( "e", "yvel=" + yvel );
+                if ( yvel > mMinimumVelocity ) {
+                    // Flinging to collapsed
+                    top = mMaxOffset;
+                    targetState = STATE_COLLAPSED;
+                }
+                else {
+                    int releasedChildTop = (int) releasedChild.getTop();
+                    if ( releasedChildTop < mMaxOffset && releasedChildTop > (mAnchorPoint + mMaxOffset) / 2 ) {
+                        // Photo was dragged below the half-point, so settle to collapsed
+                        top = mMaxOffset;
+                        targetState = STATE_COLLAPSED;
+                    }
+                    else {
+                        // Photo was not dragged far enough, so spring back to anchor
+                        top = mAnchorPoint;
+                        targetState = STATE_ANCHOR_POINT;
+                    }
+                }
             }
+            //}
+            //else
+            //if ( mHideable  &&  shouldHide( releasedChild, yvel ) ) { // Clicking on collapsed should move up to anchor state
+            //    top = mAnchorPoint;
+            //    targetState = STATE_ANCHOR_POINT;
+            //}
+/*
             else
             if ( yvel == 0.f ) {
                 int currentTop = releasedChild.getTop();
@@ -887,11 +914,13 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                 top = mMaxOffset;
                 targetState = STATE_COLLAPSED;
             }
+*/
             if ( mViewDragHelper.settleCapturedViewAt( releasedChild.getLeft(), top ) ) {
                 setStateInternal( STATE_SETTLING );
                 mSettlingToState = targetState;
                 ViewCompat.postOnAnimation( releasedChild, new SettleRunnable( releasedChild, targetState, false ) );
-            } else {
+            }
+            else {
                 setStateInternal( targetState );
             }
         }
