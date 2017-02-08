@@ -30,7 +30,7 @@ Giving thx to @akaN44 and @vit001 for their contribution :D.
 -Dragging or flinging can be performed on both the BottomSheet, or the Backdrop (parallax photo).<br>
 -Multiple photos can be provided, and you can swipe between them.<br>
 -BottomSheet can be scrolled horizontally and display data provided by ViewPagerAdapter.<br>
--Horizontal scrolling can be done both by swiping on the BottomSheet and by swiping on the Backdrop (parallax photo).<br>
+-Horizontal scrolling can be done both by swiping on the BottomSheet and by swiping on the Backdrop (parallax photo). You can disable horizontal swiping by providing only one item to adapter.<br>
 -If multiple photos are present, swiping on photos will first swipe to the last photo, then swiping will resume on BottomSheets.<br>
 -BottomSheet can be made non-hideable and/or non-collapsible.<br>
 

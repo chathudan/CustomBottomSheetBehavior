@@ -34,6 +34,7 @@ public abstract class SoftCache<T> {
             SoftReference<T> softRef = (SoftReference<T>) mRecyclingStack.pop();
 
             Object obj = softRef.get();
+
             /*
              * if referent object is empty(due to GC) then create a new
              * object

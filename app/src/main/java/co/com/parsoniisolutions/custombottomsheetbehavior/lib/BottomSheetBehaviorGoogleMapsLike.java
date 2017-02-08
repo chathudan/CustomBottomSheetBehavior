@@ -721,18 +721,18 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             top = mAnchorPoint; // DEFAULT
         }
 
-        // Animate
-        setStateInternal( STATE_SETTLING );
-        mSettlingToState = state;
-        if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top ) ) {
-            ViewCompat.postOnAnimation( child, new SettleRunnable( child, state, noCallbacksNoAnim ) );
-        }
-/*
-        else {
-            child.setScrollY( top );
-            setStateInternal( state, noCallbacksNoAnim );
-        }
-*/
+        //if ( noCallbacksNoAnim  &&  mLastStableState == STATE_EXPANDED  &&  state == STATE_ANCHOR_POINT ) {
+        //    mNestedScrollingChildRef.get().scrollTo( 0, 0 );
+            //onNestedFling( (CoordinatorLayout)mNestedScrollingChildRef.get().getParent(), (V)mNestedScrollingChildRef.get(), mNestedScrollingChildRef.get(), 0, 10000, true );
+        //}
+        //else {
+            setStateInternal( STATE_SETTLING );
+            mSettlingToState = state;
+            if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top ) ) {
+                ViewCompat.postOnAnimation( child, new SettleRunnable( child, state, noCallbacksNoAnim ) );
+            }
+        //}
+
     }
 
     /**
@@ -1009,6 +1009,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                 ViewCompat.postOnAnimation( mView, this );
             } else {
                 setStateInternal( mTargetState, mNoCallbacks );
+                mNestedScrollingChildRef.get().scrollTo( 0, 0 );
             }
             if ( mNestedScrollingChildRef.get() != null ) {
                 CoordinatorLayout cl = (CoordinatorLayout)mNestedScrollingChildRef.get().getParent();
