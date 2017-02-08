@@ -10,8 +10,10 @@ import android.view.View;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.DelegatingMergedAppBarLayoutBehavior;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.FloatingFrameLayout;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.ScrollAwareFABBehavior;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.Utils;
 
 import java.lang.ref.WeakReference;
 
@@ -37,7 +39,9 @@ public class BottomSheetPage {
 
     public @LayoutRes int layoutRes() { throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override layoutRes()" ); }
 
+    private int mPosition = -1;
     void setCorrespondingAdapterPosition( int position ) {
+        mPosition = position;
         setUI( position );
     }
 
@@ -63,6 +67,7 @@ public class BottomSheetPage {
         mNestedScrollView = mInflatedView.findViewById( R.id.bottom_sheet );
         setFabBehaviorParameters();
         setOnBottomSheetStateChangedListener();
+        setDelegatingMergedToolbarParameters();
     }
     protected void setUI( int position ) { }
 
@@ -96,15 +101,10 @@ public class BottomSheetPage {
         FloatingActionButton ffl = (FloatingActionButton) mInflatedView.findViewById( R.id.fab);
         if ( ffl != null ) {
             int fabHeight = (int)ffl.getContext().getResources().getDimension( R.dimen.fab_size );
-            int toolbarHeight = 0;
-            TypedValue tv = new TypedValue();
-            if ( ffl.getContext().getTheme().resolveAttribute( android.R.attr.actionBarSize, tv, true ) ) {
-                toolbarHeight = TypedValue.complexToDimensionPixelSize( tv.data, ffl.getContext().getResources().getDisplayMetrics() );
-            }
 
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ffl.getLayoutParams();
             ScrollAwareFABBehavior behavior = (ScrollAwareFABBehavior)params.getBehavior();
-            behavior.setOffsetValue( toolbarHeight + fabHeight / 2 );
+            behavior.setOffsetValue( Utils.getToolbarHeight(ffl.getContext()) + fabHeight / 2 );
             //behavior.setHideTopOffsetPx( toolbarHeight + fabHeight / 2 );
             //behavior.setHideBottomOffsetPx( toolbarHeight );//+ (int)(6 * MainActivity.sDensity) );
             //ffl.setAnimateSize( true );
@@ -112,4 +112,22 @@ public class BottomSheetPage {
         }
     }
 
+    private void setDelegatingMergedToolbarParameters() {
+        View mergedAppBar = mInflatedView.findViewById( R.id.delegating_merged_appbarlayout );
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mergedAppBar.getLayoutParams();
+        DelegatingMergedAppBarLayoutBehavior behavior = (DelegatingMergedAppBarLayoutBehavior) params.getBehavior();
+        behavior.setToolbarTop( Utils.getStatusBarHeight( mergedAppBar.getContext() ) );
+        behavior.setToolbarBottom( Utils.getStatusBarHeight( mergedAppBar.getContext() ) + Utils.getToolbarHeight( mergedAppBar.getContext() ) );
+        behavior.setParentBottomSheetPage( this );
+    }
+
+    /**
+     * Returns true if this BottomSheetPage is currently shown (selected) in the ViewPager
+     */
+    public boolean isSelected() {
+        if ( mPagerAdapterRef.get() == null ) {
+            return false;
+        }
+        return mPagerAdapterRef.get().selectedPosition() == mPosition;
+    }
 }

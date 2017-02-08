@@ -41,10 +41,10 @@
         android:layout_height="wrap_content"/>
 
     <!-- Toolbar visible on detail screen -->
-    <android.support.design.widget.AppBarLayout
+    <co.com.parsoniisolutions.custombottomsheetbehavior.lib.MergedAppBarLayout
         android:id="@+id/merged_appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="@dimen/bottom_sheet_peek_height"
         android:background="@android:color/transparent"
         android:theme="@style/AppTheme.AppBarOverlayDark"
         android:visibility="invisible"
@@ -78,6 +78,7 @@
                     app:title="Modal-Toolbar-Title"
                     android:layout_gravity="bottom"
                     android:layout_alignParentBottom="true"
+                    app:navigationIcon="@drawable/ic_close_white_24dp"
                     android:background="@drawable/full_bleed_image_darkener" />
 
                 <!-- Shadow gradient underneath the transparent toolbar -->
@@ -89,5 +90,5 @@
 
             </RelativeLayout>
         </FrameLayout>
-    </android.support.design.widget.AppBarLayout>
+    </co.com.parsoniisolutions.custombottomsheetbehavior.lib.MergedAppBarLayout>
 </android.support.design.widget.CoordinatorLayout>

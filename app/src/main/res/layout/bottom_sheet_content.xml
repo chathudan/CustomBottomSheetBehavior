@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:text="Title dummy"
                 android:textColor="@android:color/white"
-                android:textSize="19sp"/>
+                android:textSize="17sp"/>
 
             <TextView
                 android:id="@+id/text_dummy1"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="Text dummy 1234 1234"
                 android:textColor="@android:color/white"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:layout_marginTop="5dp"/>
 
             <TextView
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:text="Text dummy qwer asdf zxcv"
                 android:textColor="@android:color/white"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:layout_marginTop="5dp"/>
 
         </LinearLayout>

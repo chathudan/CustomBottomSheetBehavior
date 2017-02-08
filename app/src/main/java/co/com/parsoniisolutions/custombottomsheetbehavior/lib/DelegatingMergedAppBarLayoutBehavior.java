@@ -8,14 +8,13 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.NestedScrollingParent;
-import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
-import android.widget.TextView;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
 import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
@@ -70,23 +69,32 @@ public class DelegatingMergedAppBarLayoutBehavior extends AppBarLayout.Scrolling
         boolean childMoved = false;
 
         if ( isDependencyYBelowAnchorPoint( parent, dependency ) ) {
-            EventBus.getDefault().post( new EventMergedAppBarVisibility( true, (int)child.getY(), EventMergedAppBarVisibility.State.BELOW_ANCHOR_POINT, 0, parent ) );
+            if ( publish() ) {
+                EventBus.getDefault().post( new EventMergedAppBarVisibility( true, (int) child.getY(), EventMergedAppBarVisibility.State.BELOW_ANCHOR_POINT, 0, parent ) );
+            }
             childMoved = false;
         }
         else
         if ( isDependencyYBetweenAnchorPointAndToolbar( parent, child,dependency ) ) {
-            EventBus.getDefault().post( new EventMergedAppBarVisibility( true, (int)child.getY(), EventMergedAppBarVisibility.State.ABOVE_ANCHOR_POINT, 0, parent ) );
+            if ( publish() ) {
+                EventBus.getDefault().post( new EventMergedAppBarVisibility( true, (int) child.getY(), EventMergedAppBarVisibility.State.ABOVE_ANCHOR_POINT, 0, parent ) );
+            }
             childMoved = ! mVisible;
         }
         else
         if ( isDependencyYBelowToolbar( child, dependency )  &&  ! isDependencyYReachTop( dependency ) ) {
             int partialHeight = (int)(toolbarBottom - dependency.getY());
-            EventBus.getDefault().post( new EventMergedAppBarVisibility( true, (int)child.getY(), EventMergedAppBarVisibility.State.INSIDE_TOOLBAR, partialHeight, parent ) );
+            if ( publish() ) {
+                EventBus.getDefault().post( new EventMergedAppBarVisibility( true, (int) child.getY(), EventMergedAppBarVisibility.State.INSIDE_TOOLBAR, partialHeight, parent ) );
+            }
             childMoved = ! mVisible;
         }
         else
         if ( isDependencyYBelowStatusToolbar( child, dependency )  ||  isDependencyYReachTop( dependency ) ) {
-            EventBus.getDefault().post( new EventMergedAppBarVisibility( true, (int)child.getY(), EventMergedAppBarVisibility.State.TOP_OF_TOOLBAR, 0, parent ) ); // end state
+            int partialHeight = (int)(toolbarBottom - dependency.getY());
+            if ( publish() ) {
+                EventBus.getDefault().post( new EventMergedAppBarVisibility( true, (int) child.getY(), EventMergedAppBarVisibility.State.TOP_OF_TOOLBAR, partialHeight, parent ) ); // end state
+            }
             childMoved = ! mVisible;
         }
         return childMoved;
@@ -148,11 +156,12 @@ public class DelegatingMergedAppBarLayoutBehavior extends AppBarLayout.Scrolling
 
     private int toolbarBottom = 0;
     private int toolbarTop    = 0;
-    public void setToolbarBottom( int toolbarBottom ) {
-        this.toolbarBottom = toolbarBottom;
-    }
-    public void setToolbarTop( int toolbarTop ) {
-        this.toolbarTop = toolbarTop;
+    public void setToolbarBottom( int toolbarBottom ) { this.toolbarBottom = toolbarBottom; }
+    public void setToolbarTop(    int toolbarTop )    { this.toolbarTop = toolbarTop; }
+
+    private BottomSheetPage mParentBottomSheetPage = null;
+    public void setParentBottomSheetPage( BottomSheetPage bottomSheetPage ) {
+        mParentBottomSheetPage = bottomSheetPage;
     }
 
     private boolean isDependencyYBelowToolbar( @NonNull View child, @NonNull View dependency ) {
@@ -165,18 +174,6 @@ public class DelegatingMergedAppBarLayoutBehavior extends AppBarLayout.Scrolling
 
     private boolean isDependencyYReachTop( @NonNull View dependency ){
         return dependency.getY() == 0;
-    }
-
-    private TextView findTitleTextView( Toolbar toolbar ){
-        for (int i = 0; i < toolbar.getChildCount(); i++) {
-            View toolBarChild = toolbar.getChildAt(i);
-            if (toolBarChild instanceof TextView &&
-                    ((TextView)toolBarChild).getText() != null &&
-                    ((TextView)toolBarChild).getText().toString().contentEquals(mContext.getResources().getString(R.string.key_binding_default_toolbar_name))) {
-                return (TextView) toolBarChild;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -236,5 +233,9 @@ public class DelegatingMergedAppBarLayoutBehavior extends AppBarLayout.Scrolling
             throw new IllegalArgumentException("The view is not associated with " + "DelegatingMergedAppBarLayoutBehavior");
         }
         return (DelegatingMergedAppBarLayoutBehavior) behavior;
+    }
+
+    private boolean publish() {
+        return mParentBottomSheetPage.isSelected();
     }
 }

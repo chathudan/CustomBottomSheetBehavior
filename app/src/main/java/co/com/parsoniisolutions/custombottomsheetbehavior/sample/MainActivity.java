@@ -1,6 +1,5 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.sample;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -9,7 +8,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
@@ -18,13 +16,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
-import android.widget.TextView;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.MergedAppBarLayout;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.Utils;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
 
 
@@ -96,17 +96,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 */
-        //AppBarLayout mergedAppBarLayout = (AppBarLayout) findViewById(R.id.merged_appbarlayout);
-        //DelegatingMergedAppBarLayoutBehavior mergedAppBarLayoutBehavior = DelegatingMergedAppBarLayoutBehavior.from(mergedAppBarLayout);
-        //mergedAppBarLayoutBehavior.setToolbarTitle("Title Dummy");
-        /*
-        mergedAppBarLayoutBehavior.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
-            }
-        });
-        */
 
         List<MainContentPagerItem> pageList = new ArrayList<>();
         for ( int i = 1; i < 10; ++i ) {
@@ -129,10 +118,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         MainContentViewPagerAdapter adapter = new MainContentViewPagerAdapter( pageList );
-        BottomSheetViewPager bottomSheetViewPager = (BottomSheetViewPager) findViewById( R.id.view_pager_main_content );
+        final BottomSheetViewPager bottomSheetViewPager = (BottomSheetViewPager) findViewById( R.id.view_pager_main_content );
         bottomSheetViewPager.setAdapter( adapter );
         bottomSheetViewPager.setOffscreenPageLimit( 0 );
         bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT, false );
+
+        MergedAppBarLayout mergedAppBarLayout = (MergedAppBarLayout) findViewById(R.id.merged_appbarlayout);
+        mergedAppBarLayout.setNavigationOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick( View v ) {
+                bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED, false );
+            }
+        } );
 
         /**
          * Listen for page swipe callbacks

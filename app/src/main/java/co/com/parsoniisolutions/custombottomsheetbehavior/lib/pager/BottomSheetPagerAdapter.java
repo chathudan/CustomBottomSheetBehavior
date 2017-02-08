@@ -63,8 +63,6 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
 
     public abstract BottomSheetPage createNewPage( LayoutInflater inflater );
 
-    public void onPageSelected( int position ) { }
-
 
     public void onBottomSheetStateChanged( int newState, BottomSheetPage bottomSheetPage ) {
         if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
@@ -85,5 +83,13 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
 
             bsp.setBottomSheetState( newState, true );
         }
+    }
+
+    private int mSelectedPosition = 0;
+    public void onPageSelected( int position ) {
+        mSelectedPosition = position;
+    }
+    public int selectedPosition() {
+        return mSelectedPosition;
     }
 }
