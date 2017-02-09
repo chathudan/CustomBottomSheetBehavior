@@ -11,7 +11,8 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView;
-import android.support.v4.widget.ViewDragHelper;
+
+import android.support.v4.widget.CustomViewDragHelper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -115,7 +116,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
     private int mSettlingToState = STATE_ANCHOR_POINT; // If settling, this is the state we are settling to
 
 
-    private ViewDragHelper mViewDragHelper;
+    private CustomViewDragHelper mViewDragHelper;
 
     private boolean mIgnoreEvents;
 
@@ -233,7 +234,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             ViewCompat.offsetTopAndBottom( child, mAnchorPoint );
         }
         if ( mViewDragHelper == null ) {
-            mViewDragHelper = ViewDragHelper.create( parent, mDragCallback );
+            mViewDragHelper = CustomViewDragHelper.create( parent, mDragCallback );
         }
         mViewRef = new WeakReference<>(child);
         mNestedScrollingChildRef = new WeakReference<>( findScrollingChild( child ) );
@@ -294,7 +295,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         if ( ! mIgnoreEvents  &&  mViewDragHelper.shouldInterceptTouchEvent( event ) ) {
             return true;
         }
-        // We have to handle cases that the ViewDragHelper does not capture the bottom sheet because
+        // We have to handle cases that the CustomViewDragHelper does not capture the bottom sheet because
         // it is not the top most view of its parent. This is not necessary when the touch event is
         // happening over the scrolling content as nested scrolling logic handles that case.
         View scroll = mNestedScrollingChildRef.get();
@@ -327,7 +328,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
         mViewDragHelper.processTouchEvent( event );
 
-        // The ViewDragHelper tries to capture only the top-most View. We have to explicitly tell it
+        // The CustomViewDragHelper tries to capture only the top-most View. We have to explicitly tell it
         // to capture the bottom sheet in case it is not captured and the touch slop is passed.
         if ( action == MotionEvent.ACTION_MOVE  &&  ! mIgnoreEvents ) {
             int slop = mViewDragHelper.getTouchSlop();
@@ -570,9 +571,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                     }
         }
 
-        //mLastStableState = targetState;
-        //child.scrollTo( child.getLeft(), top );
-
         if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top ) ) {
             setStateInternal( STATE_SETTLING );
             mSettlingToState = targetState;
@@ -728,13 +726,21 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             //onNestedFling( (CoordinatorLayout)mNestedScrollingChildRef.get().getParent(), (V)mNestedScrollingChildRef.get(), mNestedScrollingChildRef.get(), 0, 10000, true );
         //}
         //else {
+
+        if ( ! noCallbacksNoAnim ) {
             setStateInternal( STATE_SETTLING );
             mSettlingToState = state;
             if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top ) ) {
                 ViewCompat.postOnAnimation( child, new SettleRunnable( child, state, noCallbacksNoAnim ) );
             }
-        //}
-
+        }
+        else {
+            setStateInternal( STATE_SETTLING );
+            mSettlingToState = state;
+            if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top, 1 ) ) {
+                ViewCompat.postOnAnimation( child, new SettleRunnable( child, state, noCallbacksNoAnim ) );
+            }
+        }
     }
 
     /**
@@ -780,20 +786,11 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
         if ( state == STATE_HIDDEN  ||  state == STATE_COLLAPSED  ||  state == STATE_ANCHOR_POINT  ||  state == STATE_EXPANDED ) {
             mLastStableState = state;
-//EventBus.getDefault().post( new EventBottomSheetSettled( state ) );
 
             if ( bottomSheet != null  &&  mCallback != null  &&  ! noCallbacksNoAnim ) {
                 notifyStateChangedToListeners( bottomSheet, state );
             }
         }
-/*
-        if ( state == STATE_COLLAPSED  ||  state == STATE_ANCHOR_POINT ) {
-            View scroll = mNestedScrollingChildRef.get();
-            if ( scroll != null ) {
-                scroll.scrollTo( 0, 0 );
-            }
-        }
-*/
     }
 
     private void notifyStateChangedToListeners(@NonNull View bottomSheet, @State int newState) {
@@ -809,7 +806,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
     }
 
     private void reset() {
-        mActivePointerId = ViewDragHelper.INVALID_POINTER;
+        mActivePointerId = CustomViewDragHelper.INVALID_POINTER;
         mEventCancelled = false;
     }
 
@@ -838,7 +835,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         return null;
     }
 
-    private final ViewDragHelper.Callback mDragCallback = new ViewDragHelper.Callback() {
+    private final CustomViewDragHelper.Callback mDragCallback = new CustomViewDragHelper.Callback() {
 
         @Override
         public boolean tryCaptureView( View child, int pointerId ) {
@@ -865,7 +862,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
         @Override
         public void onViewDragStateChanged( int state ) {
-            if ( state == ViewDragHelper.STATE_DRAGGING ) {
+            if ( state == CustomViewDragHelper.STATE_DRAGGING ) {
                 setStateInternal( STATE_DRAGGING );
             }
         }
