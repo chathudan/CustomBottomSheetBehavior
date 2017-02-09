@@ -41,7 +41,8 @@
         app:layout_anchorGravity="top"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_sheet_shadow_height"
-        android:background="@drawable/bottomsheet_shadow" />
+        android:background="@drawable/bottomsheet_shadow"
+        app:layout_behavior="@string/BottomSheetShadowBehavior" />
 
     <co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView
         android:id="@+id/bottom_sheet"

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.NestedScrollingParent;
+import android.support.v4.view.PagerAdapter;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -73,18 +74,22 @@ public class BackdropBottomSheetBehavior<V extends View> extends CoordinatorLayo
     public boolean onDependentViewChanged( CoordinatorLayout parent, View child, View dependency ) {
 
         /**
-         * collapsedY and achorPointY are calculated every time looking for
+         * collapsedY and anchorPointY are calculated every time looking for
          * flexibility, in case that dependency's height, child's height or {@link BottomSheetBehaviorGoogleMapsLike#getPeekHeight()}'s
-         * value changes throught the time, I mean, you can have a {@link android.widget.ImageView}
+         * value changes throughout the time, I mean, you can have a {@link android.widget.ImageView}
          * using images with different sizes and you don't want to resize them or so
          */
-        if (mBottomSheetBehaviorRef == null || mBottomSheetBehaviorRef.get() == null)
+        if ( mBottomSheetBehaviorRef == null || mBottomSheetBehaviorRef.get() == null)
             getBottomSheetBehavior(parent);
+
+
+        int peekHeight = mBottomSheetBehaviorRef.get().getPeekHeight();
+
         /**
          * mCollapsedY: Y position in where backdrop get hidden behind dependency.
          * {@link BottomSheetBehaviorGoogleMapsLike#getPeekHeight()} and collapsedY are the same point on screen.
          */
-        int collapsedY = dependency.getHeight() - mBottomSheetBehaviorRef.get().getPeekHeight();
+        int collapsedY = dependency.getHeight() - peekHeight;
         /**
          * anchorPointY: with top being Y=0, anchorPointY defines the point in Y where could
          * happen 2 things:
@@ -99,13 +104,18 @@ public class BackdropBottomSheetBehavior<V extends View> extends CoordinatorLayo
          */
         int lastCurrentChildY = mCurrentChildY;
 
-        if((mCurrentChildY = (int) ((dependency.getY()-anchorPointY) * collapsedY / (collapsedY-anchorPointY))) <= 0) {
-            child.setY( mCurrentChildY = 0 );
+        mCurrentChildY = (int) ((dependency.getY()-anchorPointY) * collapsedY / (collapsedY-anchorPointY));
+        if ( mCurrentChildY <= 0 ) {
+            mCurrentChildY = 0;
         }
-        else {
-            child.setY( mCurrentChildY );
-        }
-        return (lastCurrentChildY != mCurrentChildY);
+        //else
+        //if ( mCurrentChildY >= dependency.getHeight() - peekHeight ) {
+        //    mCurrentChildY = dependency.getHeight() - peekHeight;
+        //}
+
+        child.setY( mCurrentChildY );
+
+        return ( lastCurrentChildY != mCurrentChildY );
     }
 
     /**

@@ -961,9 +961,10 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
         @Override
         public int clampViewPositionVertical( View child, int top, int dy ) {
-            return constrain(top, mMinOffset, mHideable ? mParentHeight : mMaxOffset);
+            // Force stop at collapsed
+            return constrain( top, mMinOffset, mMaxOffset );
         }
-        int constrain(int amount, int low, int high) {
+        int constrain( int amount, int low, int high ) {
             return amount < low ? low : (amount > high ? high : amount);
         }
 
@@ -973,12 +974,8 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         }
 
         @Override
-        public int getViewVerticalDragRange(View child) {
-            if (mHideable) {
-                return mParentHeight - mMinOffset;
-            } else {
-                return mMaxOffset - mMinOffset;
-            }
+        public int getViewVerticalDragRange( View child ) {
+            return mMaxOffset - mMinOffset;
         }
     };
 

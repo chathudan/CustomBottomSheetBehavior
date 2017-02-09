@@ -37,6 +37,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:overScrollMode="never"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
