@@ -105,10 +105,11 @@ public class MapViewWithLoading extends MapView {
             return;
         }
 
-//find the position, animate the scroll if it is a neihbor, no anim otherwise
-//int position = googleMapMarkerData.get
+        // Find the position, animate the scroll if it is a direct neighbor, no anim otherwise
+        // int position = googleMapMarkerData.get
+        boolean anim = false;
 
-        mBottomSheetViewPagerWithLoading.scrollToId( id, false );
+        mBottomSheetViewPagerWithLoading.scrollToId( id, anim );
 
     }
 

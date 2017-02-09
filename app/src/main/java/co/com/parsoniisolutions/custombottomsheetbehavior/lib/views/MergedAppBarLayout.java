@@ -7,9 +7,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -44,8 +46,6 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
             Log.e( "e", "EventBusException " + e.toString() );
             e.printStackTrace();
         }
-
-        //mMergedPartialBackgroundLayoutParams = (RelativeLayout.LayoutParams)getLayoutParams();
     }
 
     private @ColorRes int getFullBackgroundColorRes()     { return android.R.color.transparent; } // return R.color.colorPrimaryDark; }
@@ -53,7 +53,7 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
         setBackgroundColor( ContextCompat.getColor( getContext(), colorRes ) );
     }
     private void setVisible( boolean visible ) {
-        if ( ! visible  && mVisible ) {
+        if ( ! visible  &&  mVisible ) {
             mAppBarLayoutAnimation = animate().setDuration( getResources().getInteger( android.R.integer.config_shortAnimTime ) );
             mVisible = false;
             mAppBarLayoutAnimation.setListener( new AnimatorListenerAdapter() {
@@ -71,9 +71,7 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
             mAppBarLayoutAnimation.alpha( 0 ).y( -getHeight()/4 ).start();
         }
         else
-        if ( visible  &&  !mVisible ) {
-            mMergedToolBar.setNavigationOnClickListener( mOnNavigationClickListener );
-
+        if ( visible  &&  ! mVisible ) {
             setY( -getHeight()/4 );
             setAlpha( 0 );
             setVisibility( View.VISIBLE );
@@ -99,7 +97,8 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
     public void onEvent( EventMergedAppBarVisibility ev ) {
 
         if ( mMergedToolBar == null ) {
-            mMergedToolBar = (Toolbar) findViewById( R.id.expanded_toolbar );
+            mMergedToolBar = (Toolbar) findViewById( R.id.merged_toolbar );
+            mMergedToolBar.setNavigationOnClickListener( mOnNavigationClickListener );
         }
         if ( mMergedPartialBackground == null ) {
             mMergedPartialBackground = findViewById( R.id.merged_background );
@@ -146,6 +145,9 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
 
     public void setNavigationOnClickListener(View.OnClickListener listener){
         this.mOnNavigationClickListener = listener;
+        if ( mMergedToolBar != null ) {
+            mMergedToolBar.setNavigationOnClickListener( mOnNavigationClickListener );
+        }
     }
 
 }

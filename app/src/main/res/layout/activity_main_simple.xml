@@ -72,7 +72,7 @@
                     android:layout_gravity="bottom"/>
 
                 <android.support.v7.widget.Toolbar
-                    android:id="@+id/expanded_toolbar"
+                    android:id="@+id/merged_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:popupTheme="@style/AppTheme.PopupOverlay"
@@ -86,7 +86,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_above="@id/expanded_toolbar"
+                    android:layout_above="@id/merged_toolbar"
                     android:background="#77000000" />
 
             </RelativeLayout>

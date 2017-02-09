@@ -875,7 +875,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
             int top;
             @State int targetState;
-            if ( yvel < -mMinimumVelocity ) { // Flinging up
+            if ( yvel < -mMinimumVelocity*5 ) { // Flinging up
                 if ( mLastStableState == STATE_ANCHOR_POINT ) {
                     top = mMinOffset;
                     targetState = STATE_EXPANDED;
@@ -886,7 +886,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                 }
             }
             else
-            if ( yvel > mMinimumVelocity ) { // Flinging down
+            if ( yvel > mMinimumVelocity*5 ) { // Flinging down
                 if ( mLastStableState == STATE_ANCHOR_POINT ) {
                     top = mMaxOffset;
                     targetState = STATE_COLLAPSED;

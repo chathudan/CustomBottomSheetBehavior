@@ -7,7 +7,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
@@ -23,6 +27,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +39,27 @@ import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withl
  * More advanced demo with async loading and coordination with map
  */
 public class MainActivityWithLoading extends AppCompatActivity {
+
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu ) {
+        super.onCreateOptionsMenu( menu );
+
+        // Clear anything already on the menu
+        menu.clear();
+
+        getMenuInflater().inflate( R.menu.scroll, menu );
+        return true;
+    }
+
+
+    @Override
+    public boolean onPrepareOptionsMenu( Menu menu ) {
+        //MenuItem mi = menu.findItem( R.id.menu_gps );
+        //if ( mi != null ) {
+            //mi.getIcon();
+        //}
+        return super.onPrepareOptionsMenu( menu );
+    }
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -55,14 +82,14 @@ public class MainActivityWithLoading extends AppCompatActivity {
             }
         } );
 
-        Toolbar toolbar = (Toolbar) findViewById( R.id.scrolltoolbar );
-        setSupportActionBar(toolbar);
+
+/*
         ActionBar actionBar = getSupportActionBar();
         if ( actionBar != null ) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle( "" );
         }
-
+*/
         final BottomSheetViewPagerWithLoading bottomSheetViewPager = (BottomSheetViewPagerWithLoading) findViewById( R.id.view_pager_main_content );
         BottomSheetPagerAdapterCheeseWithLoading adapter = new BottomSheetPagerAdapterCheeseWithLoading( bottomSheetViewPager, getCheeseData() );
         bottomSheetViewPager.setAdapter( adapter );
@@ -70,13 +97,58 @@ public class MainActivityWithLoading extends AppCompatActivity {
         bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT, false );
 
 
-        MergedAppBarLayout mergedAppBarLayout = (MergedAppBarLayout) findViewById(R.id.merged_appbarlayout);
+        /**
+         * Set up the Map Toolbar
+         */
+        Toolbar scroll_toolbar = (Toolbar) findViewById( R.id.scrolltoolbar );
+        scroll_toolbar.setTitle( "" );
+        scroll_toolbar.inflateMenu( R.menu.scroll );
+        scroll_toolbar.setOnMenuItemClickListener( new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick( MenuItem item ) {
+                if ( item.getItemId() == R.id.action_search ) {
+                    Toast.makeText( getApplicationContext(), "Clicked search", Toast.LENGTH_LONG ).show();
+                    return true;
+                }
+                else
+                if ( item.getItemId() == R.id.action_info ) {
+                    Toast.makeText( getApplicationContext(), "Clicked info", Toast.LENGTH_LONG ).show();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+        /**
+         * Set up the Bottomsheet Appbar
+         */
+        MergedAppBarLayout mergedAppBarLayout = (MergedAppBarLayout) findViewById( R.id.merged_appbarlayout );
         mergedAppBarLayout.setNavigationOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick( View v ) {
                 bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED, false );
             }
         } );
+
+        Toolbar merged_toolbar = (Toolbar) findViewById( R.id.merged_toolbar );
+        merged_toolbar.setTitle( "Bottomsheet Title" );
+        merged_toolbar.inflateMenu( R.menu.merged );
+        merged_toolbar.setOnMenuItemClickListener( new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick( MenuItem item ) {
+                if ( item.getItemId() == R.id.action_edit ) {
+                    Toast.makeText( getApplicationContext(), "Clicked edit", Toast.LENGTH_LONG ).show();
+                    return true;
+                }
+                else
+                if ( item.getItemId() == R.id.action_delete ) {
+                    Toast.makeText( getApplicationContext(), "Clicked delete", Toast.LENGTH_LONG ).show();
+                    return true;
+                }
+                return false;
+            }
+        });
 
 
         /**

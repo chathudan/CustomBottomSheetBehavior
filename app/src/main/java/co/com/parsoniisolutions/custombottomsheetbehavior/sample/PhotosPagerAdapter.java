@@ -1,5 +1,7 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.sample;
 
+import com.bumptech.glide.Glide;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,16 +35,19 @@ public class PhotosPagerAdapter extends android.support.v4.view.PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem( ViewGroup container, int position ) {
         View itemView = mLayoutInflater.inflate(R.layout.photo_pager_item, container, false);
         ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
-        imageView.setImageResource(mItems.get( position) );
-        container.addView(itemView);
+        Glide.with( container.getContext() )
+                .load( mItems.get( position) )
+                .placeholder( R.drawable.cheese_loading )
+                .into( imageView );
+        container.addView( itemView );
         return itemView;
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((LinearLayout) object);
+    public void destroyItem( ViewGroup container, int position, Object object ) {
+        container.removeView( (LinearLayout) object );
     }
 }

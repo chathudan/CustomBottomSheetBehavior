@@ -9,6 +9,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -56,6 +57,10 @@ public class ScrollAppBarLayout extends android.support.design.widget.AppBarLayo
         final boolean visible = ev.getVisibility();
 
         if ( mAppBarYValueAnimator == null  ||  mScrollingAppBarVisible != visible ) {
+            if ( visible ) {
+                //((AppCompatActivity)mScrollToolBar.getContext()).setSupportActionBar( mScrollToolBar );
+            }
+
             int curY = (int) getY();
             int newY = visible ? getSettledOffsetFromTop( getContext() ) : -getHeight();
 

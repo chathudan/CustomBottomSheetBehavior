@@ -1,6 +1,12 @@
 <resources>
 
-    <style name="AppTheme.AppBarOverlayLight" parent="ThemeOverlay.AppCompat.ActionBar" />
+    <style name="AppTheme.AppBarOverlayLight" parent="ThemeOverlay.AppCompat.ActionBar" >
+        <!-- navigation icon color -->
+        <item name="colorControlNormal">@color/grey600</item>
+
+        <!-- color of the menu overflow icon -->
+        <item name="android:textColorSecondary">@color/grey600</item>
+    </style>
     <style name="AppTheme.AppBarOverlayDark"  parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <!-- Base application theme. -->
