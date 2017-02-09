@@ -898,7 +898,12 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             }
             else {
                 int releasedChildTop = releasedChild.getTop();
-                if ( releasedChildTop < mMaxOffset && releasedChildTop > (mAnchorPoint + mMaxOffset) / 2 ) {
+                if ( releasedChildTop > mMaxOffset ) {
+                    top = mParentHeight;
+                    targetState = STATE_HIDDEN;
+                }
+                else
+                if ( releasedChildTop <= mMaxOffset && releasedChildTop > (mAnchorPoint + mMaxOffset) / 2 ) {
                     // Photo was dragged below the bottom half-point, so settle to collapsed
                     top = mMaxOffset;
                     targetState = STATE_COLLAPSED;

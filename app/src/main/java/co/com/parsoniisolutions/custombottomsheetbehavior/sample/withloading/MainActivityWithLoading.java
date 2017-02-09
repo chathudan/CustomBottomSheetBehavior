@@ -78,7 +78,10 @@ public class MainActivityWithLoading extends AppCompatActivity {
             }
         } );
 
-        // Link the adapter and the map
+
+        /**
+         * Get an API for interacting with the map+bottomsheet viewpager combo
+         */
         API api = new API( mapView, bottomSheetViewPager );
 
 
