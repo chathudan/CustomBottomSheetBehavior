@@ -51,14 +51,13 @@ public class ScrollAppBarLayout extends android.support.design.widget.AppBarLayo
 //DrawerLayout dl = (DrawerLayout) getView().getRootView().findViewById( R.id.drawer_layout );
 //CustomActionBarDrawerToggle drawerToggle = new CustomActionBarDrawerToggle( (DrawerActivity)getActivity(), dl, mScrollToolBar );
 //drawerToggle.syncState();
-
         }
 
         final boolean visible = ev.getVisibility();
 
         if ( mAppBarYValueAnimator == null  ||  mScrollingAppBarVisible != visible ) {
             int curY = (int) getY();
-            int newY = visible ? DimensionUtils.getStatusBarHeight( getContext() ) : -getHeight();
+            int newY = visible ? getSettledOffsetFromTop( getContext() ) : -getHeight();
 
             mAppBarYValueAnimator = ValueAnimator.ofFloat( curY, newY );
 
@@ -92,4 +91,8 @@ public class ScrollAppBarLayout extends android.support.design.widget.AppBarLayo
         }
     }
 
+
+    private int getSettledOffsetFromTop( Context context ) {
+        return DimensionUtils.getStatusBarHeight( context ) + DimensionUtils.getScrollToolbarPaddingTop( context );
+    }
 }

@@ -6,25 +6,35 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventViewPagerPageSelected;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventViewPagerScrollStateChanged;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBusException;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 
 public class BottomSheetViewPager extends ViewPager {
 
-    public BottomSheetViewPager( Context context ) {
-        this( context, null );
-    }
-
+    public BottomSheetViewPager( Context context ) { this( context, null ); }
     public BottomSheetViewPager( Context context, AttributeSet attrs ) {
         super( context, attrs );
         init();
     }
 
-    /**
-     *
-     */
+    private OnPageChangeListener mOnPageChangeListener = new OnPageChangeListener() {
+        @Override
+        public void onPageScrolled( int position, float positionOffset, int positionOffsetPixels ) { }
+        @Override
+        public void onPageSelected( int position ) { EventBus.getDefault().post( new EventViewPagerPageSelected( position ) ); }
+        @Override
+        public void onPageScrollStateChanged( int state ) { EventBus.getDefault().post( new EventViewPagerScrollStateChanged( state ) );}
+    };
+
     private int mTopOfCollapsedSheetY;
     private void init() {
         int peekHeight   = (int)getContext().getResources().getDimension( R.dimen.bottom_sheet_peek_height );
@@ -32,80 +42,62 @@ public class BottomSheetViewPager extends ViewPager {
         mTopOfCollapsedSheetY = screenHeight - peekHeight;
 
         addOnPageChangeListener( mOnPageChangeListener );
+        registerEventBus();
     }
 
-    private OnPageChangeListener mOnPageChangeListener = new OnPageChangeListener() {
-        @Override
-        public void onPageSelected( final int position ) {
-            BottomSheetPagerAdapter adapter = (BottomSheetPagerAdapter)getAdapter();
-            adapter.onPageSelected( position );
+    private void registerEventBus() {
+        try {
+            EventBus.getDefault().register( this );
+        } catch ( EventBusException e ) {
+            e.printStackTrace();
         }
+    }
 
-        @Override
-        public void onPageScrolled( int position, float positionOffset, int positionOffsetPixels ) { }
-        @Override
-        public void onPageScrollStateChanged( int state ) { }
-    };
-
+    private boolean mIgnoreEvents = false;
     @Override
     public boolean onInterceptTouchEvent( MotionEvent ev ) {
 
-        int state = bottomSheetState();
+        int action = MotionEventCompat.getActionMasked( ev );
+        if ( action == MotionEvent.ACTION_DOWN ) {
 
-        // Is it hidden?
-        if ( state == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN ) {
-            return false;
-        }
-
-        // Is it collapsed?
-        if ( state == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED ) {
-            // Is the touch inside the peekHeight?
-            int action = MotionEventCompat.getActionMasked( ev );
-            if ( action == MotionEvent.ACTION_DOWN ) {
-                int y     = (int) ev.getY();
-                if ( y > mTopOfCollapsedSheetY ) {
-                    return super.onInterceptTouchEvent( ev );
+            int state = bottomSheetState();
+            // Is it hidden?
+            if ( state == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN ) {
+                mIgnoreEvents = true;
+            }
+            // Is it collapsed?
+            else
+            if ( state == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED ) {
+                // Is the touch inside the peekHeight?
+                int y = (int) ev.getY();
+                if ( y < mTopOfCollapsedSheetY ) {
+                    mIgnoreEvents = true;
+                }
+                else {
+                    mIgnoreEvents = false;
                 }
             }
             else {
-                // Do not intercept touch, let the google map underneath handle it
-                return super.onInterceptTouchEvent( ev );
+                mIgnoreEvents = false;
             }
         }
 
-        return super.onInterceptTouchEvent( ev );
+        if ( mIgnoreEvents ) {
+            return true; // Intercept the touch, child viewpager will not receive onTouch
+        }
+        else {
+            return super.onInterceptTouchEvent( ev );
+        }
     }
 
     @Override
     public boolean onTouchEvent( MotionEvent ev ) {
-
-        int state = bottomSheetState();
-        // Is it hidden? If yes, pass on touches to map underneath
-        if ( state == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN ) {
-            return false;
+        if ( mIgnoreEvents ) {
+            return false;    // Return false, we did not handle the touch, let parent googlemap handle it
         }
-
-        // Is it collapsed? Pass on touches above the peekheight to map underneath
-        if ( state == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED ) {
-            // Is the touch inside the peekHeight?
-            int action = MotionEventCompat.getActionMasked( ev );
-            if ( action == MotionEvent.ACTION_DOWN ) {
-                int y     = (int) ev.getY();
-
-                if ( y > mTopOfCollapsedSheetY ) {
-                    return super.onTouchEvent( ev );
-                }
-                else {
-                    return false;
-                }
-            }
-            else {
-                // Do not intercept touch, let the google map underneath handle it
-                return super.onTouchEvent( ev );
-            }
+        else {
+            return super.onTouchEvent( ev );
         }
-
-        return super.onTouchEvent( ev );
     }
 
     private int mBottomSheetState = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
@@ -133,9 +125,42 @@ public class BottomSheetViewPager extends ViewPager {
         return adp.getBottomSheetAtPosition( pos );
     }
 
-    public void addBottomSheetCallback( BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback bottomSheetCallback ) {
-        BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
-        adp.addBottomSheetCallback( bottomSheetCallback );
+    //public void addBottomSheetCallback( BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback bottomSheetCallback ) {
+    //    BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
+    //    adp.addBottomSheetCallback( bottomSheetCallback );
+    // }
+
+    @Subscribe( sticky = false, threadMode = ThreadMode.MAIN )
+    public void onEvent( EventViewPagerPageSelected ev ) {
     }
 
+    // The bottom sheet state of some pager item changed, either caused by user or by system
+    public void callBottomSheetStateChanged( int newState, BottomSheetPage bottomSheetPage ) {
+        //for ( BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback cb : mBottomSheetStateCallbacks ) {
+        //    cb.onStateChanged( bottomSheetPage.inflatedView(), newState );
+        //}
+
+        mBottomSheetState = newState;
+
+        if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
+               newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||
+               newState == BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED     ||
+               newState == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN )
+           )
+            return;
+
+        // Iterate over all instantiated views
+        BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
+
+        for ( int i = 0, size = adp.allViews().size(); i < size; ++i ) {
+            View view = adp.allViews().valueAt( i );
+            BottomSheetPage bsp = (BottomSheetPage) view.getTag( R.id.BOTTOM_SHEET_PAGE );
+            if ( bsp == null )
+                continue;
+            if ( bsp == bottomSheetPage )
+                continue;
+
+            bsp.setBottomSheetState( newState, true );
+        }
+    }
 }

@@ -1,11 +1,9 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib.map;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetPagerAdapterWithLoading;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetViewPagerWithLoading;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventMapCameraState;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -13,12 +11,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventMapCameraState.State.CANCEL;
@@ -49,6 +45,24 @@ public class MapViewWithLoading extends MapView {
                         return false;
                     }
                 } );
+
+                mGoogleMap.setOnCameraMoveStartedListener(
+                        new GoogleMap.OnCameraMoveStartedListener() {
+                            @Override
+                            public void onCameraMoveStarted( int i ) {
+                                Log.e( "e", "CAMERA MOVE STARTED" );
+                                EventBus.getDefault().post( new EventMapCameraState( START ) );
+                            }
+                        } );
+
+                mGoogleMap.setOnCameraIdleListener(
+                        new GoogleMap.OnCameraIdleListener() {
+                            @Override
+                            public void onCameraIdle() {
+                                Log.e( "e", "CAMERA IDLE" );
+                                EventBus.getDefault().post( new EventMapCameraState( FINISH ) );
+                            }
+                        } );
             }
         } );
     }
@@ -71,7 +85,7 @@ public class MapViewWithLoading extends MapView {
     }
 
     private BottomSheetViewPagerWithLoading mBottomSheetViewPagerWithLoading = null;
-    public void setBottomSheetViewPagerWithLoading( BottomSheetViewPagerWithLoading pager ) {
+    void setBottomSheetViewPagerWithLoading( BottomSheetViewPagerWithLoading pager ) {
         mBottomSheetViewPagerWithLoading = pager;
     }
 

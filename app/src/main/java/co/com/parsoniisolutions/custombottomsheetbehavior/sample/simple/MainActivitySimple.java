@@ -33,9 +33,9 @@ public class MainActivitySimple extends AppCompatActivity {
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
-        super.onCreate(savedInstanceState);
+        super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main_simple );
-        MapView mapView = (MapView)findViewById( R.id.map );
+        MapView mapView = (MapView) findViewById( R.id.map );
         mapView.onCreate( null ); // Was getting weird exceptions if passed bundle: java.lang.RuntimeException: Unable to start activity
         mapView.onResume(); // needed to get the map to display immediately
 
@@ -56,14 +56,19 @@ public class MainActivitySimple extends AppCompatActivity {
         for ( int i = 1; i < 8; ++i ) {
             List<Integer> drawableList;
             if ( i == 1 ) {
-                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_1 ); add( R.drawable.cheese_2 );}};
+                drawableList = new ArrayList<Integer>() {{
+                    add( R.drawable.cheese_1 );
+                    add( R.drawable.cheese_2 );
+                }};
             }
-            else
-            if ( i == 2 ) {
-                drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_3 ); add( R.drawable.cheese_4 ); add( R.drawable.cheese_5 ); }};
+            else if ( i == 2 ) {
+                drawableList = new ArrayList<Integer>() {{
+                    add( R.drawable.cheese_3 );
+                    add( R.drawable.cheese_4 );
+                    add( R.drawable.cheese_5 );
+                }};
             }
-            else
-            if ( i == 3 ) {
+            else if ( i == 3 ) {
                 drawableList = new ArrayList<Integer>() {{ add( R.drawable.cheese_6 ); }};
             }
             else {
@@ -75,8 +80,8 @@ public class MainActivitySimple extends AppCompatActivity {
             pageList.add( item );
         }
 
-        BottomSheetPagerAdapterCheeseSimple adapter = new BottomSheetPagerAdapterCheeseSimple( pageList );
         final BottomSheetViewPager bottomSheetViewPager = (BottomSheetViewPager) findViewById( R.id.view_pager_main_content );
+        BottomSheetPagerAdapterCheeseSimple adapter = new BottomSheetPagerAdapterCheeseSimple( bottomSheetViewPager, pageList );
         bottomSheetViewPager.setAdapter( adapter );
         bottomSheetViewPager.setOffscreenPageLimit( 0 ); // Set to zero for demo to illustrate the ViewPager View recycling. Will probably want a larger value in production.
         bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT, false );
@@ -88,56 +93,8 @@ public class MainActivitySimple extends AppCompatActivity {
                 bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED, false );
             }
         } );
-
-        /**
-         * Listen for page swipe callbacks
-         */
-        bottomSheetViewPager.addOnPageChangeListener( new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled( int position, float positionOffset, int positionOffsetPixels ) {
-                Log.d("pager position:", String.valueOf( position) );
-            }
-
-            @Override
-            public void onPageSelected( int position ) { }
-
-            @Override
-            public void onPageScrollStateChanged( int state ) { }
-        } );
-
-
-        /**
-         * Listen for BottomSheet callbacks
-         */
-        bottomSheetViewPager.addBottomSheetCallback( new BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
-            @Override
-            public void onStateChanged( @NonNull View bottomSheet, @BottomSheetBehaviorGoogleMapsLike.State int newState ) {
-                switch (newState) {
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED:
-                        Log.d( "bottomsheet-", "STATE_COLLAPSED" );
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_DRAGGING:
-                        Log.d( "bottomsheet-", "STATE_DRAGGING" );
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED:
-                        Log.d( "bottomsheet-", "STATE_EXPANDED" );
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT:
-                        Log.d( "bottomsheet-", "STATE_ANCHOR_POINT" );
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN:
-                        Log.d( "bottomsheet-", "STATE_HIDDEN" );
-                        break;
-                    default:
-                        Log.d( "bottomsheet-", "STATE_SETTLING" );
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide( @NonNull View bottomSheet, float slideOffset ) { }
-        } );
     }
+
 
 
     /**

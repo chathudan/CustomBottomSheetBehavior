@@ -1,15 +1,5 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.sample.withloading;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
@@ -19,15 +9,22 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.map.MapViewWithLoading;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.MapViewWithLoading;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.API;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetViewPagerWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetDataWithLoading.LocationType.POINT;
 
@@ -61,22 +58,17 @@ public class MainActivityWithLoading extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById( R.id.scrolltoolbar );
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        if ( actionBar != null ) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(" ");
+            actionBar.setTitle( "" );
         }
 
-        List<GeoCheeseData> data = getCheeseData();
-
-        BottomSheetPagerAdapterCheeseWithLoading adapter = new BottomSheetPagerAdapterCheeseWithLoading( data );
         final BottomSheetViewPagerWithLoading bottomSheetViewPager = (BottomSheetViewPagerWithLoading) findViewById( R.id.view_pager_main_content );
+        BottomSheetPagerAdapterCheeseWithLoading adapter = new BottomSheetPagerAdapterCheeseWithLoading( bottomSheetViewPager, getCheeseData() );
         bottomSheetViewPager.setAdapter( adapter );
         bottomSheetViewPager.setOffscreenPageLimit( 0 );
         bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT, false );
 
-        // Link the adapter and the map
-        mapView.setBottomSheetViewPagerWithLoading( bottomSheetViewPager );
-        adapter.setMapView( mapView );
 
         MergedAppBarLayout mergedAppBarLayout = (MergedAppBarLayout) findViewById(R.id.merged_appbarlayout);
         mergedAppBarLayout.setNavigationOnClickListener( new View.OnClickListener() {
@@ -85,6 +77,16 @@ public class MainActivityWithLoading extends AppCompatActivity {
                 bottomSheetViewPager.setBottomSheetState( BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED, false );
             }
         } );
+
+        // Link the adapter and the map
+        API api = new API( mapView, bottomSheetViewPager );
+        api.addOnSelectedListener(
+                new API.OnSelectedListener() {
+                    @Override
+                    public void onSelected( long id ) {
+                        Log.e( "e", "Selected id " + id );
+                    }
+                });
 
         /**
          * Listen for page swipe callbacks
@@ -106,6 +108,7 @@ public class MainActivityWithLoading extends AppCompatActivity {
         /**
          * Listen for BottomSheet callbacks
          */
+/*
         bottomSheetViewPager.addBottomSheetCallback( new BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
             @Override
             public void onStateChanged( @NonNull View bottomSheet, @BottomSheetBehaviorGoogleMapsLike.State int newState ) {
@@ -134,6 +137,7 @@ public class MainActivityWithLoading extends AppCompatActivity {
             @Override
             public void onSlide( @NonNull View bottomSheet, float slideOffset ) { }
         } );
+*/
     }
 
 
@@ -166,7 +170,6 @@ public class MainActivityWithLoading extends AppCompatActivity {
             mapView.addMarker( item.getId(), mo );
         }
     }
-
 
     // Let's create some dummy data
     private List<GeoCheeseData> getCheeseData() {

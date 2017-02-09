@@ -3,16 +3,15 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
+import java.lang.ref.WeakReference;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
+
 
 
 public abstract class BottomSheetPagerAdapter extends PagerAdapter {
@@ -21,9 +20,13 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
     private SoftCache<BottomSheetPage> mBottomSheetPageCache = new BottomSheetPageCache( BottomSheetPage.class );
 
     // Let's remember which adapter position maps to which view
-    private Map<Integer,View> positionToViewMap = new HashMap<>();
+    private SparseArray<View> positionToViewMap = new SparseArray<>();
 
-    private int mBottomSheetState = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
+    protected WeakReference<BottomSheetViewPager> mViewPagerRef;
+    public BottomSheetPagerAdapter( BottomSheetViewPager bottomSheetViewPager ) {
+        mViewPagerRef = new WeakReference<>( bottomSheetViewPager );
+    }
+    protected BottomSheetViewPager viewPager() { return mViewPagerRef.get(); }
 
     @Override
     public View instantiateItem( ViewGroup container, int position ) {
@@ -33,7 +36,7 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
         container.addView( inflatedView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT );
 
         bottomSheetPage.setNewAdapterPosition( position );
-        bottomSheetPage.setBottomSheetState( mBottomSheetState, true );
+        bottomSheetPage.setBottomSheetState( mViewPagerRef.get().bottomSheetState(), true );
 
         positionToViewMap.put( position, inflatedView );
         return inflatedView;
@@ -62,6 +65,11 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
 
     public abstract BottomSheetPage createNewPage( LayoutInflater inflater );
 
+    public SparseArray<View> allViews() {
+        return positionToViewMap;
+    }
+
+/*
     private Vector<BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback> mBottomSheetStateCallbacks;
     public void addBottomSheetCallback( BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback bottomSheetCallback ) {
         if ( mBottomSheetStateCallbacks == null ) {
@@ -70,19 +78,20 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
 
         mBottomSheetStateCallbacks.add( bottomSheetCallback );
     }
-
+*/
+/*
     public void onBottomSheetStateChanged( int newState, BottomSheetPage bottomSheetPage ) {
         for ( BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback cb : mBottomSheetStateCallbacks ) {
             cb.onStateChanged( bottomSheetPage.inflatedView(), newState );
         }
+
+        mBottomSheetState = newState;
 
         if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
                newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||
                newState == BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED )
                 )
             return;
-
-        mBottomSheetState = newState;
 
         // Iterate over all instantiated views
         for ( View view : positionToViewMap.values() ) {
@@ -95,7 +104,8 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
             bsp.setBottomSheetState( newState, true );
         }
     }
-
+*/
+/*
     private int mSelectedPosition = 0;
     public void onPageSelected( int position ) {
         mSelectedPosition = position;
@@ -103,4 +113,10 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
     public int selectedPosition() {
         return mSelectedPosition;
     }
+
+    private int mBottomSheetState = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
+    public int bottomSheetState() {
+        return mBottomSheetState;
+    }
+*/
 }

@@ -9,13 +9,14 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
 import co.com.parsoniisolutions.custombottomsheetbehavior.sample.PhotosPagerAdapter;
 
 
 public class BottomSheetPageCheeseSimple extends BottomSheetPage {
 
-    public BottomSheetPageCheeseSimple( LayoutInflater inflater, BottomSheetPagerAdapter bottomSheetPagerAdapter ) {
-        super( inflater, bottomSheetPagerAdapter );
+    public BottomSheetPageCheeseSimple( LayoutInflater inflater, BottomSheetViewPager bottomSheetViewPager ) {
+        super( inflater, bottomSheetViewPager );
     }
 
     @Override
@@ -47,7 +48,7 @@ public class BottomSheetPageCheeseSimple extends BottomSheetPage {
     @Override
     protected BottomSheetData getBottomSheetData( int position ) {
         // Return the data for a pager position on UI thread
-        BottomSheetPagerAdapterCheeseSimple adapter = (BottomSheetPagerAdapterCheeseSimple) pagerAdapter();
+        BottomSheetPagerAdapterCheeseSimple adapter = (BottomSheetPagerAdapterCheeseSimple) mViewPagerRef.get().getAdapter();
         if ( adapter == null )
             return null;
         CheeseData item = adapter.getItemAtPosition( position );

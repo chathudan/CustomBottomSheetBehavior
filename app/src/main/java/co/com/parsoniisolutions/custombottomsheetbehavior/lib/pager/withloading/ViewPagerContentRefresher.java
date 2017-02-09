@@ -1,20 +1,22 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading;
 
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.EventBusException;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_DRAGGING;
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN;
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING;
 
 
 /**
@@ -25,11 +27,10 @@ import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.B
 public class ViewPagerContentRefresher {
 
     private Map<BottomSheetPageWithLoading, BottomSheetData> mQueue = new HashMap<>();
-    private WeakReference<BottomSheetViewPager> mBottomSheetViewPager = null;
-    private int mViewPagerState = ViewPager.SCROLL_STATE_IDLE;
+    private int mViewPagerState   = ViewPager.SCROLL_STATE_IDLE;
+    private int mBottomSheetState = STATE_COLLAPSED;
 
-    public ViewPagerContentRefresher( BottomSheetViewPager bottomSheetViewPager ) {
-        registerViewPager( bottomSheetViewPager );
+    public ViewPagerContentRefresher() {
         registerEventBus();
     }
 
@@ -41,6 +42,7 @@ public class ViewPagerContentRefresher {
         }
     }
 
+    // Do not set the UI when the map is visible and moving
     private EventMapCameraState.State mMapCameraState = EventMapCameraState.State.FINISH; // Default is no camera animation in progress
     @Subscribe( sticky = true, threadMode = ThreadMode.MAIN )
     public void onEvent( EventMapCameraState ev ) {
@@ -52,25 +54,26 @@ public class ViewPagerContentRefresher {
         }
     }
 
-    private void registerViewPager( BottomSheetViewPager viewPager ) {
-        mBottomSheetViewPager = new WeakReference<>( viewPager );
-
-        viewPager.addOnPageChangeListener( new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrollStateChanged( int state ) {
-                mViewPagerState = state;
-
-                if ( state == ViewPager.SCROLL_STATE_IDLE ) {
-                    if ( canEmptyQueue() ) {
-                        emptyQueue();
-                    }
-                }
+    // Do not set the UI when the view pager is sliding
+    @Subscribe( sticky = true, threadMode = ThreadMode.MAIN )
+    public void onEvent( EventViewPagerScrollStateChanged ev ) {
+        mViewPagerState = ev.state();
+        if ( ev.state() == ViewPager.SCROLL_STATE_IDLE ) {
+            if ( canEmptyQueue() ) {
+                emptyQueue();
             }
-            @Override
-            public void onPageSelected( int position ) { }
-            @Override
-            public void onPageScrolled( int position, float positionOffset, int positionOffsetPixels ) { }
-        } );
+        }
+    }
+
+    // Do not set the UI when the BottomSheet is moving
+    @Subscribe( sticky = true, threadMode = ThreadMode.MAIN )
+    public void onEvent( EventBottomSheetState ev ) {
+        mBottomSheetState = ev.state();
+        if ( ev.state() != STATE_DRAGGING  &&  ev.state() != STATE_SETTLING ) {
+            if ( canEmptyQueue() ) {
+                emptyQueue();
+            }
+        }
     }
 
     // ViewPager is now idle, let's empty the queue
@@ -87,8 +90,7 @@ public class ViewPagerContentRefresher {
     }
 
     public void addTask( BottomSheetPageWithLoading bottomSheetPage, BottomSheetData bottomSheetData ) {
-        if ( mBottomSheetViewPager.get() == null )
-            return;
+        Log.e("e","Adding task");
 
         if ( canEmptyQueue() ) {
             // Execute it immediately
@@ -96,6 +98,7 @@ public class ViewPagerContentRefresher {
         }
         else {
             // Queue it for later
+            Log.e("e","Queing task");
             mQueue.put( bottomSheetPage, bottomSheetData );
         }
     }
@@ -105,11 +108,11 @@ public class ViewPagerContentRefresher {
             return false;
         }
 
-        if ( mBottomSheetViewPager.get() == null )
+        if ( mBottomSheetState == STATE_DRAGGING  ||  mBottomSheetState  == STATE_SETTLING ) {
             return false;
+        }
 
-        int bottomSheetState = mBottomSheetViewPager.get().bottomSheetState();
-        if ( isMapVisiblyAnimating( bottomSheetState ) ) {
+        if ( isMapVisiblyAnimating() ) {
             return false;
         }
 
@@ -117,13 +120,14 @@ public class ViewPagerContentRefresher {
     }
 
     // The map has to be visible, and camera animating
-    private boolean isMapVisiblyAnimating( int bottomSheetState ) {
-        if ( bottomSheetState == STATE_COLLAPSED  ||  bottomSheetState == STATE_HIDDEN ) {
-            if ( mMapCameraState == EventMapCameraState.State.START ) {
+    private boolean isMapVisiblyAnimating() {
+        if ( mBottomSheetState == STATE_COLLAPSED  ||  mBottomSheetState == STATE_HIDDEN ) {
+            if ( mMapCameraState == EventMapCameraState.State.START  ||  mMapCameraState == EventMapCameraState.State.CANCEL ) {
                 return true;
             }
         }
 
+        Log.e("E","MAP STATE IS " + mMapCameraState );
         return false;
     }
 

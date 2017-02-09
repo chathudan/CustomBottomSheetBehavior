@@ -11,6 +11,7 @@ import java.util.List;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 
+
 public class PhotosPagerAdapter extends android.support.v4.view.PagerAdapter {
 
     LayoutInflater mLayoutInflater;

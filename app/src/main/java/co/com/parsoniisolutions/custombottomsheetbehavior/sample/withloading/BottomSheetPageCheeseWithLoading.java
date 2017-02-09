@@ -14,13 +14,14 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetPageWithLoading;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetViewPagerWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.sample.PhotosPagerAdapter;
 
 
 public class BottomSheetPageCheeseWithLoading extends BottomSheetPageWithLoading {
 
-    public BottomSheetPageCheeseWithLoading( LayoutInflater inflater, BottomSheetPagerAdapter bottomSheetPagerAdapter ) {
-        super( inflater, bottomSheetPagerAdapter );
+    public BottomSheetPageCheeseWithLoading( LayoutInflater inflater, BottomSheetViewPagerWithLoading viewPager ) {
+        super( inflater, viewPager );
     }
 
     @Override
@@ -45,6 +46,12 @@ public class BottomSheetPageCheeseWithLoading extends BottomSheetPageWithLoading
         mTitle.setText( cheeseData.getTitle() );
         mSubTitle.setText( cheeseData.getSubTitle() );
 
+        try {
+            Thread.sleep(0); // Simulate a complex UI which takes time to set
+        } catch ( InterruptedException e ) {
+            e.printStackTrace();
+        }
+
         PhotosPagerAdapter photos_adapter = new PhotosPagerAdapter( mPhotosViewPager.getContext(), cheeseData.getImageResourceList() );
         mPhotosViewPager.setAdapter(photos_adapter);
     }
@@ -61,21 +68,28 @@ public class BottomSheetPageCheeseWithLoading extends BottomSheetPageWithLoading
 
     @Override
     protected void getBottomSheetDataAsync( final int position, final OnBottomSheetDataLoadedCallback cb ) {
+        // TODO - cancel the task if another request comes for a different position
         // Load the data asynchronously ...
         AsyncTask<Void,Void,BottomSheetDataWithLoading> loadDataAsyncTask = new AsyncTask<Void, Void, BottomSheetDataWithLoading>() {
+
+            private BottomSheetPagerAdapterCheeseWithLoading adp;
+
+            @Override
+            protected void onPreExecute() {
+                adp = (BottomSheetPagerAdapterCheeseWithLoading)(mViewPagerRef.get().getAdapter());
+            }
+
             @Override
             protected BottomSheetDataWithLoading doInBackground( Void... params ) {
                 // Simulate a longer loading time
                 try {
-                    Thread.sleep( 1500 );
+                    Thread.sleep( 500 );
                 } catch ( InterruptedException e ) { }
 
-                BottomSheetPagerAdapterCheeseWithLoading adapter = (BottomSheetPagerAdapterCheeseWithLoading)pagerAdapter();
-                if ( adapter == null )
+                if ( adp == null )
                     return null;
-                GeoCheeseData item = adapter.getItemAtPosition( position );
+                GeoCheeseData item = adp.getItemAtPosition( position );
                 return item;
-                //cb.onDataLoaded( item );
             }
 
             @Override

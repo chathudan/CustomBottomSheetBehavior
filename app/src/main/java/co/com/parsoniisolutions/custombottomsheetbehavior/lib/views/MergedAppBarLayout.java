@@ -34,10 +34,7 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
     private ViewPropertyAnimator mAppBarLayoutAnimation;
     private View.OnClickListener mOnNavigationClickListener;
 
-    public MergedAppBarLayout( Context context ) {
-        this( context, null );
-    }
-
+    public MergedAppBarLayout( Context context ) { this( context, null ); }
     public MergedAppBarLayout( Context context, AttributeSet attrs ) {
         super( context, attrs );
 

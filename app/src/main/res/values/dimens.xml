@@ -11,4 +11,5 @@
     <dimen name="high_touch_slop">60dp</dimen>            <!-- The amount of touch slop when the bottom sheet is collapsed or at anchor state -->
     <dimen name="min_distance_for_fling">4dp</dimen>     <!-- Drag threshold to consider a gesture a fling -->
     <dimen name="merged_toolbar_hide_threshold">12dp</dimen> <!-- The amount by which we can scroll away from anchor state before the merged toolbar hides -->
+    <dimen name="scroll_toolbar_padding_top">8dp</dimen> <!-- The padding between scroll toolbar and status bar -->
 </resources>

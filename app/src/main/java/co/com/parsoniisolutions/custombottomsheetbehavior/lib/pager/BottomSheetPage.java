@@ -23,8 +23,10 @@ import java.lang.ref.WeakReference;
  */
 public class BottomSheetPage {
 
-    public BottomSheetPage( LayoutInflater inflater, BottomSheetPagerAdapter bottomSheetPagerAdapter ) {
-        mPagerAdapterRef = new WeakReference<>( bottomSheetPagerAdapter );
+    protected WeakReference<BottomSheetViewPager> mViewPagerRef;
+
+    public BottomSheetPage( LayoutInflater inflater, BottomSheetViewPager bottomSheetViewPager ) {
+        mViewPagerRef = new WeakReference<>( bottomSheetViewPager );
         mInflatedView = inflater.inflate( layoutRes(), null );
         initializeUI();
 
@@ -45,8 +47,6 @@ public class BottomSheetPage {
         setUI( bottomSheetData );
     }
 
-    protected WeakReference<BottomSheetPagerAdapter> mPagerAdapterRef;
-    protected BottomSheetPagerAdapter pagerAdapter() { return mPagerAdapterRef.get(); }
 
     //private   View mFabFloatingFrameLayout;
     protected View mNestedScrollView;
@@ -89,8 +89,8 @@ public class BottomSheetPage {
         behavior.addBottomSheetCallback( new BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
             @Override
             public void onStateChanged( @NonNull View bottomSheet, @BottomSheetBehaviorGoogleMapsLike.State int newState ) {
-                if ( mPagerAdapterRef.get() != null ) {
-                    mPagerAdapterRef.get().onBottomSheetStateChanged( newState, bottomSheetPage );
+                if ( mViewPagerRef.get() != null ) {
+                    mViewPagerRef.get().callBottomSheetStateChanged( newState, bottomSheetPage );
                 }
             }
 
@@ -131,10 +131,10 @@ public class BottomSheetPage {
      * Returns true if this BottomSheetPage is currently shown (selected) in the ViewPager
      */
     public boolean isSelected() {
-        if ( mPagerAdapterRef.get() == null ) {
+        if ( mViewPagerRef.get() == null ) {
             return false;
         }
-        return mPagerAdapterRef.get().selectedPosition() == mPosition;
+        return mViewPagerRef.get().getCurrentItem() == mPosition;
     }
 
     protected BottomSheetData getBottomSheetData( int position ) {

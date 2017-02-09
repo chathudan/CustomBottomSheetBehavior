@@ -7,6 +7,7 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetP
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetDataWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetPagerAdapterWithLoading;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetViewPagerWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.sample.simple.CheeseData;
 
 import java.util.List;
@@ -16,7 +17,8 @@ public class BottomSheetPagerAdapterCheeseWithLoading extends BottomSheetPagerAd
 
     List<GeoCheeseData> mMainContentPagerItems;
 
-    public BottomSheetPagerAdapterCheeseWithLoading( List<GeoCheeseData> mainContentPagerItems ) {
+    public BottomSheetPagerAdapterCheeseWithLoading( BottomSheetViewPagerWithLoading viewPager, List<GeoCheeseData> mainContentPagerItems ) {
+        super( viewPager );
         mMainContentPagerItems = mainContentPagerItems;
     }
 
@@ -35,7 +37,7 @@ public class BottomSheetPagerAdapterCheeseWithLoading extends BottomSheetPagerAd
 
     @Override
     public BottomSheetPage createNewPage( LayoutInflater inflater ) {
-        return new BottomSheetPageCheeseWithLoading( inflater, this );
+        return new BottomSheetPageCheeseWithLoading( inflater, viewPager() );
     }
 
     @Override

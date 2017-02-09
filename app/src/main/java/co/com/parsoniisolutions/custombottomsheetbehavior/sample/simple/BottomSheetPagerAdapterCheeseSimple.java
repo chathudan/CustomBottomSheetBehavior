@@ -3,17 +3,19 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.sample.simple;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import java.util.List;
-
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetViewPager;
+
+import java.util.List;
 
 
 public class BottomSheetPagerAdapterCheeseSimple extends BottomSheetPagerAdapter {
 
     List<CheeseData> mMainContentPagerItems;
 
-    public BottomSheetPagerAdapterCheeseSimple( List<CheeseData> mainContentPagerItems ) {
+    public BottomSheetPagerAdapterCheeseSimple( BottomSheetViewPager viewPager, List<CheeseData> mainContentPagerItems ) {
+        super( viewPager );
         mMainContentPagerItems = mainContentPagerItems;
     }
 
@@ -31,7 +33,7 @@ public class BottomSheetPagerAdapterCheeseSimple extends BottomSheetPagerAdapter
 
     @Override
     public BottomSheetPage createNewPage( LayoutInflater inflater ) {
-        return new BottomSheetPageCheeseSimple( inflater, this );
+        return new BottomSheetPageCheeseSimple( inflater, viewPager() );
     }
 
 }

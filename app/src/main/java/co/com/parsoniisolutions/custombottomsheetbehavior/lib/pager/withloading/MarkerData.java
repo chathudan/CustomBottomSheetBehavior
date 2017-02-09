@@ -1,4 +1,4 @@
-package co.com.parsoniisolutions.custombottomsheetbehavior.lib.map;
+package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading;
 
 import android.support.annotation.Nullable;
 
