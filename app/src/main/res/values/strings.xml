@@ -26,6 +26,7 @@ limitations under the License. Lorem ipsum dolor sit amet, consectetuer adipisci
     <string name="BackDropBottomSheetBehavior">co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BackdropBottomSheetBehavior</string>
     <string name="BottomSheetBehaviorGoogleMapsLike">co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike</string>
     <string name="ScrollAwareFABBehavior">co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.ScrollAwareFABBehavior</string>
+    <string name="MergedScrollAwareFABBehavior">co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.MergedScrollAwareFABBehavior</string>
     <string name="DelegatingMergedAppBarLayoutBehavior">co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingMergedAppBarLayoutBehavior</string>
     <string name="DelegatingScrollingAppBarLayoutBehavior">co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingScrollingAppBarLayoutBehavior</string>
 </resources>

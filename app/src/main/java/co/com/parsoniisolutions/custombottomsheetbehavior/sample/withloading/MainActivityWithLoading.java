@@ -41,27 +41,6 @@ import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withl
 public class MainActivityWithLoading extends AppCompatActivity {
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
-        super.onCreateOptionsMenu( menu );
-
-        // Clear anything already on the menu
-        menu.clear();
-
-        getMenuInflater().inflate( R.menu.scroll, menu );
-        return true;
-    }
-
-
-    @Override
-    public boolean onPrepareOptionsMenu( Menu menu ) {
-        //MenuItem mi = menu.findItem( R.id.menu_gps );
-        //if ( mi != null ) {
-            //mi.getIcon();
-        //}
-        return super.onPrepareOptionsMenu( menu );
-    }
-
-    @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
         setContentView( R.layout.activity_main_with_loading );
@@ -83,13 +62,6 @@ public class MainActivityWithLoading extends AppCompatActivity {
         } );
 
 
-/*
-        ActionBar actionBar = getSupportActionBar();
-        if ( actionBar != null ) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle( "" );
-        }
-*/
         final BottomSheetViewPagerWithLoading bottomSheetViewPager = (BottomSheetViewPagerWithLoading) findViewById( R.id.view_pager_main_content );
         BottomSheetPagerAdapterCheeseWithLoading adapter = new BottomSheetPagerAdapterCheeseWithLoading( bottomSheetViewPager, getCheeseData() );
         bottomSheetViewPager.setAdapter( adapter );
@@ -121,7 +93,7 @@ public class MainActivityWithLoading extends AppCompatActivity {
 
 
         /**
-         * Set up the Bottomsheet Appbar
+         * Set up the BottomSheet Appbar
          */
         MergedAppBarLayout mergedAppBarLayout = (MergedAppBarLayout) findViewById( R.id.merged_appbarlayout );
         mergedAppBarLayout.setNavigationOnClickListener( new View.OnClickListener() {

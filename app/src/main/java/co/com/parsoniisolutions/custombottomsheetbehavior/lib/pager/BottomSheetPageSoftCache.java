@@ -3,9 +3,9 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager;
 import android.view.LayoutInflater;
 
 
-class BottomSheetPageCache extends SoftCache<BottomSheetPage> {
+class BottomSheetPageSoftCache extends SoftCache<BottomSheetPage> {
 
-    BottomSheetPageCache( Class<BottomSheetPage> typeParameterClass ) { super( typeParameterClass ); }
+    BottomSheetPageSoftCache( Class<BottomSheetPage> typeParameterClass ) { super( typeParameterClass ); }
 
     @Override
     public BottomSheetPage runWhenCacheEmpty( LayoutInflater inflater, BottomSheetPagerAdapter bottomSheetPagerAdapter ) {

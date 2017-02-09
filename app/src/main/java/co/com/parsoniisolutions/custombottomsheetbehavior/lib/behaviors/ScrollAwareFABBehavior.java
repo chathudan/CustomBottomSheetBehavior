@@ -137,12 +137,12 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     }
 
     /**
-     * Look into the CoordiantorLayout for the {@link BottomSheetBehaviorGoogleMapsLike}
+     * Look into the CoordinatorLayout for the {@link BottomSheetBehaviorGoogleMapsLike}
      * @param coordinatorLayout with app:layout_behavior= {@link BottomSheetBehaviorGoogleMapsLike}
      */
     private void getBottomSheetBehavior(@NonNull CoordinatorLayout coordinatorLayout) {
 
-        for (int i = 0; i < coordinatorLayout.getChildCount(); i++) {
+        for ( int i = 0; i < coordinatorLayout.getChildCount(); i++) {
             View child = coordinatorLayout.getChildAt(i);
 
             if ( child instanceof NestedScrollingParent ) {

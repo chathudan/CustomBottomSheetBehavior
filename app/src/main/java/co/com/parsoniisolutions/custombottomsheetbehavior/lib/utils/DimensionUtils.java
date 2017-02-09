@@ -4,13 +4,28 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 
 
 public class DimensionUtils {
+
+    private static int mFabSize = -1;
+    public static int getFabSize( Context context ) {
+        if ( mFabSize == -1 ) {
+            mFabSize = (int)context.getResources().getDimension( R.dimen.fab_size );
+        }
+        return mFabSize;
+    }
+
+    private static int mPeekHeight = -1;
+    public static int getPeekHeight( Context context ) {
+        if ( mPeekHeight == -1 ) {
+            mPeekHeight = (int)context.getResources().getDimension( R.dimen.bottom_sheet_peek_height );
+        }
+        return mPeekHeight;
+    }
 
     private static int mScrollToolbarPaddingTop = -1;
     public static int getScrollToolbarPaddingTop( Context context ) {
@@ -19,7 +34,6 @@ public class DimensionUtils {
         }
         return mScrollToolbarPaddingTop;
     }
-
 
     private static int mStatusBarHeight = -1;
     public static int getStatusBarHeight( Context context ) {

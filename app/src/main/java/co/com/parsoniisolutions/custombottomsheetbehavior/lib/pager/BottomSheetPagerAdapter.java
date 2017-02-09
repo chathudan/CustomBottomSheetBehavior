@@ -17,7 +17,7 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 public abstract class BottomSheetPagerAdapter extends PagerAdapter {
 
     // Views are slow to inflate, so let's keep a pool if Views for reuse
-    private SoftCache<BottomSheetPage> mBottomSheetPageCache = new BottomSheetPageCache( BottomSheetPage.class );
+    private SoftCache<BottomSheetPage> mBottomSheetPageCache = new BottomSheetPageSoftCache( BottomSheetPage.class );
 
     // Let's remember which adapter position maps to which view
     private SparseArray<View> positionToViewMap = new SparseArray<>();

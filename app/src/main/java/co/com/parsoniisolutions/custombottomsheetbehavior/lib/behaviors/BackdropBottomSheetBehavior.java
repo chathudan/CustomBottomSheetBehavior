@@ -1,5 +1,7 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -8,6 +10,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import java.lang.ref.WeakReference;
+
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetPosition;
 
 /**
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,7 +70,8 @@ public class BackdropBottomSheetBehavior<V extends View> extends CoordinatorLayo
     }
 
     @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
+    public boolean onDependentViewChanged( CoordinatorLayout parent, View child, View dependency ) {
+
         /**
          * collapsedY and achorPointY are calculated every time looking for
          * flexibility, in case that dependency's height, child's height or {@link BottomSheetBehaviorGoogleMapsLike#getPeekHeight()}'s
@@ -81,24 +86,26 @@ public class BackdropBottomSheetBehavior<V extends View> extends CoordinatorLayo
          */
         int collapsedY = dependency.getHeight() - mBottomSheetBehaviorRef.get().getPeekHeight();
         /**
-         * achorPointY: with top being Y=0, achorPointY defines the point in Y where could
+         * anchorPointY: with top being Y=0, anchorPointY defines the point in Y where could
          * happen 2 things:
          * The backdrop should be moved behind dependency view (when {@link #mCurrentChildY} got
          * positive values) or the dependency view overlaps the backdrop (when
          * {@link #mCurrentChildY} got negative values)
          */
-        int achorPointY = child.getHeight();
+        int anchorPointY = child.getHeight();
         /**
          * lastCurrentChildY: Just to know if we need to return true or false at the end of this
          * method.
          */
         int lastCurrentChildY = mCurrentChildY;
 
-        if((mCurrentChildY = (int) ((dependency.getY()-achorPointY) * collapsedY / (collapsedY-achorPointY))) <= 0)
-            child.setY(mCurrentChildY = 0);
-        else
-            child.setY(mCurrentChildY);
-        return (lastCurrentChildY == mCurrentChildY);
+        if((mCurrentChildY = (int) ((dependency.getY()-anchorPointY) * collapsedY / (collapsedY-anchorPointY))) <= 0) {
+            child.setY( mCurrentChildY = 0 );
+        }
+        else {
+            child.setY( mCurrentChildY );
+        }
+        return (lastCurrentChildY != mCurrentChildY);
     }
 
     /**

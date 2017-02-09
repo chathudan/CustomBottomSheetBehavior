@@ -15,6 +15,7 @@ import android.view.ViewOutlineProvider;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetPosition;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -60,6 +61,10 @@ public class DelegatingMergedAppBarLayoutBehavior extends DelegatingAppBarLayout
 
         if ( ! mInit ) {
             init( parent, child );
+        }
+
+        if ( publish() ) {
+            EventBus.getDefault().post( new EventBottomSheetPosition( (int) (dependency.getY()) ) );
         }
 
         /**

@@ -3,16 +3,15 @@ package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingMergedAppBarLayoutBehavior;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.ScrollAwareFABBehavior;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingScrollingAppBarLayoutBehavior;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedFloatingActionButton;
 
 import java.lang.ref.WeakReference;
 
@@ -65,7 +64,6 @@ public class BottomSheetPage {
 
     protected void initializeUI() {
         mNestedScrollView = mInflatedView.findViewById( R.id.bottom_sheet );
-        setFabBehaviorParameters();
         setOnBottomSheetStateChangedListener();
         setDelegatingMergedToolbarParameters();
         setDelegatingScrollToolbarParameters();
@@ -97,18 +95,6 @@ public class BottomSheetPage {
             @Override
             public void onSlide( @NonNull View bottomSheet, float slideOffset ) { }
         });
-    }
-
-    private void setFabBehaviorParameters() {
-        FloatingActionButton ffl = (FloatingActionButton) mInflatedView.findViewById( R.id.fab );
-        if ( ffl != null ) {
-            int fabHeight = (int)ffl.getContext().getResources().getDimension( R.dimen.fab_size );
-
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ffl.getLayoutParams();
-            ScrollAwareFABBehavior behavior = (ScrollAwareFABBehavior)params.getBehavior();
-            behavior.setOffsetValue( DimensionUtils.getToolbarHeight(ffl.getContext()) + fabHeight / 2 );
-            params.setBehavior( behavior );
-        }
     }
 
     private void setDelegatingMergedToolbarParameters() {

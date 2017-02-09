@@ -10,7 +10,7 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetP
 /**
  * Behavior applied on an AppBarLayout within a ViewPager. It delegates visibility change actions.
  */
-public  class DelegatingAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBehavior {
+public class DelegatingAppBarLayoutBehavior extends AppBarLayout.ScrollingViewBehavior {
 
     public DelegatingAppBarLayoutBehavior( Context context, AttributeSet attrs ) {
         super( context, attrs );

@@ -60,6 +60,7 @@
             android:layout_height="match_parent" />
     </co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView>
 
+<!--
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_height="wrap_content"
@@ -70,6 +71,7 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_behavior="@string/ScrollAwareFABBehavior"
         android:clickable="true"/>
+-->
 
     <!-- Toolbar visible on detail screen -->
     <android.support.design.widget.AppBarLayout
