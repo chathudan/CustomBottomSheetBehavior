@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * API for handling BottomSheet swipes and map clicks
  */
-public class API {
+public class API implements APIif {
 
     WeakReference<MapViewWithLoading> mMapViewRef;
     WeakReference<BottomSheetViewPagerWithLoading> mViewPagerRef;
@@ -38,7 +38,7 @@ public class API {
         mOnSelectedListeners.remove( onSelectedListener );
     }
 
-    public void callOnPageSelected( int position, long id ) {
+    void callOnPageSelected( int position, long id ) {
         if ( mMapViewRef != null  &&  mMapViewRef.get() != null ) {
             mMapViewRef.get().animateCameraToId( id );
         }

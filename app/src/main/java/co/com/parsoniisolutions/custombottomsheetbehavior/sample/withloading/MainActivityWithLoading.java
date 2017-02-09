@@ -80,6 +80,11 @@ public class MainActivityWithLoading extends AppCompatActivity {
 
         // Link the adapter and the map
         API api = new API( mapView, bottomSheetViewPager );
+
+
+        /**
+         * Listen for selections
+         */
         api.addOnSelectedListener(
                 new API.OnSelectedListener() {
                     @Override
@@ -87,22 +92,6 @@ public class MainActivityWithLoading extends AppCompatActivity {
                         Log.e( "e", "Selected id " + id );
                     }
                 });
-
-        /**
-         * Listen for page swipe callbacks
-         */
-        bottomSheetViewPager.addOnPageChangeListener( new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled( int position, float positionOffset, int positionOffsetPixels ) {
-                Log.d("pager position:", String.valueOf( position) );
-            }
-
-            @Override
-            public void onPageSelected( int position ) { }
-
-            @Override
-            public void onPageScrollStateChanged( int state ) { }
-        } );
     }
 
 
@@ -137,7 +126,10 @@ public class MainActivityWithLoading extends AppCompatActivity {
         }
     }
 
-    // Let's create some dummy data
+
+    /**
+     * Let's create some dummy data
+     */
     private List<GeoCheeseData> getCheeseData() {
         List<GeoCheeseData> data = new ArrayList<>();
         for ( int i = 1; i < 8; ++i ) {
