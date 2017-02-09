@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -11,12 +12,20 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBusException;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_DRAGGING;
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN;
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING;
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventMapCameraState.State.CANCEL;
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventMapCameraState.State.FINISH;
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventMapCameraState.State.START;
@@ -41,8 +50,16 @@ public class MapViewWithLoading extends MapView {
                 mGoogleMap.setOnMarkerClickListener( new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick( Marker marker ) {
+                        collapseBottomSheetIfHidden();
                         scrollBottomSheetPagerToMarker( marker );
                         return false;
+                    }
+                } );
+
+                mGoogleMap.setOnMapClickListener( new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick( LatLng latLng ) {
+                        hideBottomSheet();
                     }
                 } );
 
@@ -50,7 +67,6 @@ public class MapViewWithLoading extends MapView {
                         new GoogleMap.OnCameraMoveStartedListener() {
                             @Override
                             public void onCameraMoveStarted( int i ) {
-                                Log.e( "e", "CAMERA MOVE STARTED" );
                                 EventBus.getDefault().post( new EventMapCameraState( START ) );
                             }
                         } );
@@ -59,12 +75,21 @@ public class MapViewWithLoading extends MapView {
                         new GoogleMap.OnCameraIdleListener() {
                             @Override
                             public void onCameraIdle() {
-                                Log.e( "e", "CAMERA IDLE" );
                                 EventBus.getDefault().post( new EventMapCameraState( FINISH ) );
                             }
                         } );
             }
         } );
+
+        registerEventBus();
+    }
+
+    private void registerEventBus() {
+        try {
+            EventBus.getDefault().register( this );
+        } catch ( EventBusException e ) {
+            e.printStackTrace();
+        }
     }
 
     private void scrollBottomSheetPagerToMarker( Marker marker ) {
@@ -131,4 +156,29 @@ public class MapViewWithLoading extends MapView {
         googleMapMarkerData.getMarker().showInfoWindow();
         animateCameraWithEvents( CameraUpdateFactory.newLatLng( googleMapMarkerData.getPosition() ) );
     }
+
+    private void collapseBottomSheetIfHidden() {
+        if ( mBottomSheetViewPagerWithLoading.bottomSheetState() == STATE_HIDDEN ) {
+            mBottomSheetViewPagerWithLoading.setBottomSheetState( STATE_COLLAPSED, false );
+        }
+    }
+
+    private void hideBottomSheet() {
+        mBottomSheetViewPagerWithLoading.setBottomSheetState( STATE_HIDDEN, false );
+    }
+
+    // Make the map respond to the BottomSheet state - show the zoom controls above the BottomSheet when collapsed
+    @Subscribe( sticky = true, threadMode = ThreadMode.MAIN )
+    public void onEvent( EventBottomSheetState ev ) {
+        if ( mGoogleMap == null )
+            return;
+
+        if ( ev.state() != STATE_HIDDEN ) {
+            mGoogleMap.getUiSettings().setZoomControlsEnabled( false );
+        }
+        else {
+            mGoogleMap.getUiSettings().setZoomControlsEnabled( true );
+        }
+    }
+
 }

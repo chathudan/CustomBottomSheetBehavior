@@ -1,10 +1,8 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading;
 
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.EventBusException;
 import org.greenrobot.eventbus.Subscribe;
@@ -90,15 +88,12 @@ public class ViewPagerContentRefresher {
     }
 
     public void addTask( BottomSheetPageWithLoading bottomSheetPage, BottomSheetData bottomSheetData ) {
-        Log.e("e","Adding task");
-
         if ( canEmptyQueue() ) {
             // Execute it immediately
             bottomSheetPage.setUI( bottomSheetData );
         }
         else {
             // Queue it for later
-            Log.e("e","Queing task");
             mQueue.put( bottomSheetPage, bottomSheetData );
         }
     }
@@ -127,7 +122,6 @@ public class ViewPagerContentRefresher {
             }
         }
 
-        Log.e("E","MAP STATE IS " + mMapCameraState );
         return false;
     }
 

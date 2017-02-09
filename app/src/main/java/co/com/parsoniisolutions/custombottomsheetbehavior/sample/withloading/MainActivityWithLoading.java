@@ -103,41 +103,6 @@ public class MainActivityWithLoading extends AppCompatActivity {
             @Override
             public void onPageScrollStateChanged( int state ) { }
         } );
-
-
-        /**
-         * Listen for BottomSheet callbacks
-         */
-/*
-        bottomSheetViewPager.addBottomSheetCallback( new BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
-            @Override
-            public void onStateChanged( @NonNull View bottomSheet, @BottomSheetBehaviorGoogleMapsLike.State int newState ) {
-                switch (newState) {
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED:
-                        Log.d( "bottomsheet-", "STATE_COLLAPSED" );
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_DRAGGING:
-                        Log.d( "bottomsheet-", "STATE_DRAGGING" );
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED:
-                        Log.d( "bottomsheet-", "STATE_EXPANDED" );
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT:
-                        Log.d( "bottomsheet-", "STATE_ANCHOR_POINT" );
-                        break;
-                    case BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN:
-                        Log.d( "bottomsheet-", "STATE_HIDDEN" );
-                        break;
-                    default:
-                        Log.d( "bottomsheet-", "STATE_SETTLING" );
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide( @NonNull View bottomSheet, float slideOffset ) { }
-        } );
-*/
     }
 
 
@@ -149,8 +114,9 @@ public class MainActivityWithLoading extends AppCompatActivity {
         googleMap.getUiSettings().setCompassEnabled( true );
         googleMap.getUiSettings().setMyLocationButtonEnabled( true );
 
-        googleMap.getUiSettings().setZoomControlsEnabled( false );
+        googleMap.getUiSettings().setZoomControlsEnabled( true );
         googleMap.getUiSettings().setAllGesturesEnabled( true );
+        googleMap.getUiSettings().setMapToolbarEnabled( false );
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target( new LatLng( 40.0f, -120.0f ) )
