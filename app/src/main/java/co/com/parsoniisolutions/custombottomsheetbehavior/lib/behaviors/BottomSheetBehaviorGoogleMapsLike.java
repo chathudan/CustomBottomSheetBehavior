@@ -209,14 +209,9 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             parent.onLayoutChild( child, layoutDirection );
         }
 
-        // When the bottomsheet is fully expanded, we want to align the bottom edge of the peek rectangle with the bottom edge of the appbar
-        int appBarHeight = DimensionUtils.getStatusBarHeight( child.getContext() ) + DimensionUtils.getToolbarHeight( child.getContext() );
-        int peekHeight = DimensionUtils.getPeekHeight( child.getContext() );
-        int extraOffsetForExpanded = peekHeight - appBarHeight;
-
         // Offset the bottom sheet
         mParentHeight = parent.getHeight();
-        mMinOffset    = Math.max( 0, mParentHeight - child.getHeight() )-extraOffsetForExpanded;
+        mMinOffset    = Math.max( 0, mParentHeight - child.getHeight() ) - DimensionUtils.getBottomSheetOverhangTop( child.getContext() );
         mMaxOffset    = Math.max( mParentHeight - mPeekHeight, mMinOffset );
 
         /**
@@ -552,9 +547,20 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                     }
                     // Not flinging, just settle to the nearest state
                     else {
+                        int collapseVsAnchorMid = (mAnchorPoint + mMaxOffset)/2;
+                        if ( mLastStableState == STATE_COLLAPSED  ||  mLastStableState == STATE_HIDDEN ) {
+                            // Prefer anchor
+                            collapseVsAnchorMid = mMaxOffset - ( mMaxOffset - mAnchorPoint ) / 6;
+                        }
+                        else
+                        if ( mLastStableState == STATE_ANCHOR_POINT  ||  mLastStableState == STATE_EXPANDED ) {
+                            // Prefer collapsed
+                            collapseVsAnchorMid = mAnchorPoint + ( mMaxOffset - mAnchorPoint ) / 6;
+                        }
+
                         // Collapse?
                         int currentTop = child.getTop();
-                        if ( currentTop > mAnchorPoint * 1.25 ) { // Multiply by 1.25 to account for parallax. The currentTop needs to be pulled down 50% of the anchor point before collapsing.
+                        if ( currentTop > collapseVsAnchorMid ) { // Multiply by 1.25 to account for parallax. The currentTop needs to be pulled down 50% of the anchor point before collapsing.
                             top = mMaxOffset;
                             targetState = STATE_COLLAPSED;
                         }

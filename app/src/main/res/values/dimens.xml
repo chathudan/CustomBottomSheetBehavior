@@ -6,7 +6,8 @@
     <dimen name="fab_size">56dp</dimen>
     <dimen name="fab_size_half">28dp</dimen>
     <dimen name="anchor_point">240dp</dimen>
-    <dimen name="bottom_sheet_peek_height">88dp</dimen>
+    <dimen name="bottom_sheet_peek_height">88dp</dimen>      <!-- When collapsed, this is how much of the title bar shows (can be less than it's height) -->
+    <dimen name="bottom_sheet_title_height">112dp</dimen>    <!-- The actual height of the title bar. Can be more then peek height (but not less) -->
     <dimen name="bottom_sheet_shadow_height">10dp</dimen>    <!-- The height of the shadow above the bottom sheet -->
     <dimen name="high_touch_slop">60dp</dimen>               <!-- The amount of touch slop when the bottom sheet is collapsed or at anchor state -->
     <dimen name="min_distance_for_fling">4dp</dimen>         <!-- Drag threshold to consider a gesture a fling -->

@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_sheet_peek_height"
+        android:layout_height="@dimen/bottom_sheet_title_height"
         android:background="@color/colorPrimary"
         android:paddingTop="8dp"
         android:paddingStart="16dp"
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:text="Title dummy"
                 android:textColor="@android:color/white"
-                android:textSize="17sp"/>
+                android:textSize="20sp"/>
 
             <TextView
                 android:id="@+id/text_dummy1"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="Text dummy 1234 1234"
                 android:textColor="@android:color/white"
-                android:textSize="11sp"
+                android:textSize="14sp"
                 android:layout_marginTop="5dp"/>
 
             <TextView
@@ -46,7 +46,15 @@
                 android:layout_height="wrap_content"
                 android:text="Text dummy qwer asdf zxcv"
                 android:textColor="@android:color/white"
-                android:textSize="11sp"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Some more text"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
                 android:layout_marginTop="5dp"/>
 
         </LinearLayout>

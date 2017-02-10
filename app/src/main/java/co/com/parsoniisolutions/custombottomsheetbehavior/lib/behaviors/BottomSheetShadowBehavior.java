@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.NestedScrollingParent;
-import android.support.v4.view.PagerAdapter;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -23,11 +22,6 @@ public class BottomSheetShadowBehavior<V extends View> extends CoordinatorLayout
      * "app:layout_behavior=" {@link BottomSheetBehaviorGoogleMapsLike} inside the {@link CoordinatorLayout}
      */
     private WeakReference<BottomSheetBehaviorGoogleMapsLike> mBottomSheetBehaviorRef;
-    /**
-     * Following {@link #onDependentViewChanged}'s docs mCurrentChildY just save the child Y
-     * position.
-     */
-    private int mCurrentChildY;
 
     public BottomSheetShadowBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -60,7 +54,7 @@ public class BottomSheetShadowBehavior<V extends View> extends CoordinatorLayout
 
         int oldVisibility = child.getVisibility();
         int newVisibility;
-        if ( dependency.getY() >= dependency.getHeight() ) {
+        if ( dependency.getY() >= dependency.getHeight() - DimensionUtils.getBottomSheetOverhangTop( parent.getContext() ) ) {
             newVisibility = View.INVISIBLE;
         }
         else {

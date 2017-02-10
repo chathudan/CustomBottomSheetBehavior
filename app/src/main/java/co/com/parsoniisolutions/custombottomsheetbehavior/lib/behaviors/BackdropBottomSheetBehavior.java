@@ -83,15 +83,11 @@ public class BackdropBottomSheetBehavior<V extends View> extends CoordinatorLayo
         if ( mBottomSheetBehaviorRef == null || mBottomSheetBehaviorRef.get() == null)
             getBottomSheetBehavior(parent);
 
-        int peekHeight = DimensionUtils.getPeekHeight( dependency.getContext() );
-        int appBarHeight = DimensionUtils.getStatusBarHeight( dependency.getContext() ) + DimensionUtils.getToolbarHeight( dependency.getContext() );
-        int extraOffsetForExpanded = peekHeight - appBarHeight;
-
         /**
          * mCollapsedY: Y position in where backdrop get hidden behind dependency.
          * {@link BottomSheetBehaviorGoogleMapsLike#getPeekHeight()} and collapsedY are the same point on screen.
          */
-        int collapsedY = dependency.getHeight() - extraOffsetForExpanded - peekHeight;
+        int collapsedY = dependency.getHeight() - DimensionUtils.getBottomSheetOverhangTop( dependency.getContext() ) - DimensionUtils.getPeekHeight( dependency.getContext() );
         /**
          * anchorPointY: with top being Y=0, anchorPointY defines the point in Y where could
          * happen 2 things:

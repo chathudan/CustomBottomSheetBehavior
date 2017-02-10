@@ -80,10 +80,7 @@ public class BottomSheetPage {
             @Override
             public void run() {
                 CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mNestedScrollView.getLayoutParams();
-                int appBarHeight = DimensionUtils.getStatusBarHeight( mNestedScrollView.getContext() ) + DimensionUtils.getToolbarHeight( mNestedScrollView.getContext() );
-                int peekHeight = DimensionUtils.getPeekHeight( mNestedScrollView.getContext() );
-                int extraOffsetForExpanded = peekHeight - appBarHeight;
-                params.height = mNestedScrollView.getHeight() + extraOffsetForExpanded;
+                params.height = mNestedScrollView.getHeight() + DimensionUtils.getBottomSheetOverhangTop( mNestedScrollView.getContext() );
                 mNestedScrollView.setLayoutParams( params );
             }
         } );

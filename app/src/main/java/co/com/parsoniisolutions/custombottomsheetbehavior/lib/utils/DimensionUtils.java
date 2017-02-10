@@ -97,4 +97,29 @@ public class DimensionUtils {
         }
         return mSoftButtonsBarHeight;
     }
+
+    // When the BottomSheet is expanded, this is how much it sticks out above the top of the screen (always positive value or zero)
+    private static int mBottomSheetOverhangTop = -1;
+    public static int getBottomSheetOverhangTop( Context context ) {
+        if ( mBottomSheetOverhangTop == -1 ) {
+            int appBarHeight = DimensionUtils.getStatusBarHeight( context ) + DimensionUtils.getToolbarHeight( context );
+            int titleBarHeight = (int)context.getResources().getDimension( R.dimen.bottom_sheet_title_height );
+            mBottomSheetOverhangTop = titleBarHeight - appBarHeight;
+        }
+        return mBottomSheetOverhangTop;
+    }
+
+    // When the BottomSheet is collapsed, this is how much it sticks out below the bottom of the screen (always positive value or zero)
+    private static int mBottomSheetOverhangBottom = -1;
+    public static int getBottomSheetOverhangBottom( Context context ) {
+        if ( mBottomSheetOverhangBottom == -1 ) {
+            int titleBarHeight = (int)context.getResources().getDimension( R.dimen.bottom_sheet_title_height );
+            int peekHeight = DimensionUtils.getPeekHeight( context );
+            mBottomSheetOverhangBottom = titleBarHeight - peekHeight;
+        }
+        return mBottomSheetOverhangBottom;
+    }
+
+
+
 }
