@@ -16,6 +16,7 @@ import android.view.ViewOutlineProvider;
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetPosition;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -101,6 +102,7 @@ public class DelegatingMergedAppBarLayoutBehavior extends DelegatingAppBarLayout
             }
             childMoved = ! mVisible;
         }
+
         return childMoved;
     }
 
@@ -138,21 +140,17 @@ public class DelegatingMergedAppBarLayoutBehavior extends DelegatingAppBarLayout
         }
     }
 
-    private int mHideThreshold = -1;
     private boolean isDependencyYBelowAnchorPoint( @NonNull CoordinatorLayout parent, @NonNull View dependency ) {
-        if ( mHideThreshold == -1 ) {
-            mHideThreshold = (int)parent.getContext().getResources().getDimension( R.dimen.merged_toolbar_hide_threshold );
-        }
 
         if ( mBottomSheetBehaviorRef == null  ||  mBottomSheetBehaviorRef.get() == null )
             getBottomSheetBehavior( parent );
-        return dependency.getY() > mBottomSheetBehaviorRef.get().getAnchorPoint() + mHideThreshold;
+        return dependency.getY() > mBottomSheetBehaviorRef.get().getAnchorPoint() + DimensionUtils.getMergedToolbarHideThreshold( dependency.getContext() );
     }
 
     private boolean isDependencyYBetweenAnchorPointAndToolbar( @NonNull CoordinatorLayout parent, @NonNull View child, @NonNull View dependency ) {
         if ( mBottomSheetBehaviorRef == null  ||  mBottomSheetBehaviorRef.get() == null )
             getBottomSheetBehavior( parent );
-        return dependency.getY() <= mBottomSheetBehaviorRef.get().getAnchorPoint() &&  dependency.getY() > toolbarBottom;
+        return dependency.getY() <= mBottomSheetBehaviorRef.get().getAnchorPoint() + DimensionUtils.getMergedToolbarHideThreshold( dependency.getContext() )  &&  dependency.getY() > toolbarBottom;
     }
 
     private int toolbarBottom = 0;

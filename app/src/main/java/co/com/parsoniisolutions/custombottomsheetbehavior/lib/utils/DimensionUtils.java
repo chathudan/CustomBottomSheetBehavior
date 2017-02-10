@@ -11,6 +11,15 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 
 public class DimensionUtils {
 
+    private static int mMergedToolbarHideThreshold = -1;
+    public static int getMergedToolbarHideThreshold( Context context ) {
+        if ( mMergedToolbarHideThreshold == -1 ) {
+            mMergedToolbarHideThreshold = (int)context.getResources().getDimension( R.dimen.merged_toolbar_hide_threshold );
+        }
+        return mMergedToolbarHideThreshold;
+    }
+
+
     private static int mFabSize = -1;
     public static int getFabSize( Context context ) {
         if ( mFabSize == -1 ) {
