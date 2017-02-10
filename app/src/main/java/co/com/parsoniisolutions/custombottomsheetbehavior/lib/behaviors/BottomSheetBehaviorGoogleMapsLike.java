@@ -23,6 +23,7 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetState;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.scrolltracking.ScrollTrackingBehavior;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView;
 
 import java.lang.annotation.Retention;
@@ -208,9 +209,14 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             parent.onLayoutChild( child, layoutDirection );
         }
 
+        // When the bottomsheet is fully expanded, we want to align the bottom edge of the peek rectangle with the bottom edge of the appbar
+        int appBarHeight = DimensionUtils.getStatusBarHeight( child.getContext() ) + DimensionUtils.getToolbarHeight( child.getContext() );
+        int peekHeight = DimensionUtils.getPeekHeight( child.getContext() );
+        int extraOffsetForExpanded = peekHeight - appBarHeight;
+
         // Offset the bottom sheet
         mParentHeight = parent.getHeight();
-        mMinOffset    = Math.max( 0, mParentHeight - child.getHeight() );
+        mMinOffset    = Math.max( 0, mParentHeight - child.getHeight() )-extraOffsetForExpanded;
         mMaxOffset    = Math.max( mParentHeight - mPeekHeight, mMinOffset );
 
         /**

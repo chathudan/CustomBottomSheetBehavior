@@ -10,6 +10,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.ColorRes;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +21,9 @@ import android.view.ViewPropertyAnimator;
 import android.widget.RelativeLayout;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingMergedAppBarLayoutBehavior;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.EventMergedAppBarVisibility;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 
 
 /**
@@ -46,6 +49,21 @@ public class MergedAppBarLayout extends android.support.design.widget.AppBarLayo
             Log.e( "e", "EventBusException " + e.toString() );
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        post( new Runnable() {
+            @Override
+            public void run() {
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getLayoutParams();
+                params.height = DimensionUtils.getStatusBarHeight( getContext() ) + DimensionUtils.getToolbarHeight( getContext() );
+                setLayoutParams( params ); // force layout for new height to take effect
+            }
+        } );
+
     }
 
     private @ColorRes int getFullBackgroundColorRes()     { return android.R.color.transparent; } // return R.color.colorPrimaryDark; }

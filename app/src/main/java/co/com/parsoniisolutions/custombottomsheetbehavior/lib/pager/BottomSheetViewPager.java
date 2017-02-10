@@ -188,6 +188,9 @@ public class BottomSheetViewPager extends ViewPager {
     }
 
     private void mirrorBottomSheetStates( int newState, int sourcePosition ) {
+        if ( ! BottomSheetBehaviorGoogleMapsLike.isStateStable( newState ) )
+            return;
+
         // Iterate over all instantiated views, skip the source bottomsheepage when mirroring
         BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
 
@@ -203,18 +206,14 @@ public class BottomSheetViewPager extends ViewPager {
                 continue;
             }
 
-            if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED     ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN )
-               )
-                continue;
-
             bsp.setBottomSheetState( newState, true );
         }
     }
 
     private void mirrorBottomSheetStatesCached( int newState ) {
+        if ( ! BottomSheetBehaviorGoogleMapsLike.isStateStable( newState ) )
+            return;
+
         BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
 
         for ( Reference<BottomSheetPage> ref : adp.allCachedViews() ) {
@@ -223,18 +222,14 @@ public class BottomSheetViewPager extends ViewPager {
                 continue;
             }
 
-            if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED     ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN )
-               )
-                continue;
-
             page.setBottomSheetState( newState, true );
         }
     }
 
     private void mirrorBottomSheetStates( int newState, BottomSheetPage sourcePage ) {
+        if ( ! BottomSheetBehaviorGoogleMapsLike.isStateStable( newState ) )
+            return;
+
         // Iterate over all instantiated views, skip the source bottomsheepage when mirroring
         BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
 
@@ -246,13 +241,6 @@ public class BottomSheetViewPager extends ViewPager {
             if ( bsp.equals( sourcePage ) ) {
                 continue;
             }
-
-            if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED     ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN )
-                    )
-                continue;
 
             bsp.setBottomSheetState( newState, true );
         }

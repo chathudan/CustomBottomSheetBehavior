@@ -54,7 +54,7 @@
     <co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedAppBarLayout
         android:id="@+id/merged_appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_sheet_peek_height"
+        android:layout_height="?attr/actionBarSize"
         android:background="@android:color/transparent"
         android:theme="@style/AppTheme.AppBarOverlayDark"
         android:visibility="invisible"

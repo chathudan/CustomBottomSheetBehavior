@@ -48,12 +48,6 @@ public class BottomSheetPage {
     //private   View mFabFloatingFrameLayout;
     protected View mNestedScrollView;
 
-    public int getBottomSheetState() {
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)mInflatedView.findViewById( R.id.bottom_sheet ).getLayoutParams();
-        BottomSheetBehaviorGoogleMapsLike behavior = (BottomSheetBehaviorGoogleMapsLike)params.getBehavior();
-        return behavior.getState();
-    }
-
     public void setBottomSheetState( int newState, boolean noanim ) {
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)mInflatedView.findViewById( R.id.bottom_sheet ).getLayoutParams();
         BottomSheetBehaviorGoogleMapsLike behavior = (BottomSheetBehaviorGoogleMapsLike)params.getBehavior();
@@ -75,18 +69,35 @@ public class BottomSheetPage {
     public void onDestroy() { }
 
     private void setBottomSheetBehaviorParameters() {
+        // Resize the bottom sheet to account for any possible difference between the peek height and appbar height
+        // When the bottomsheet is fully expanded, we want to align the bottom edge of the peek rectangle with the bottom edge of the appbar
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mNestedScrollView.getLayoutParams();
         BottomSheetBehaviorGoogleMapsLike behavior = (BottomSheetBehaviorGoogleMapsLike) params.getBehavior();
         behavior.setParentBottomSheetPage( this );
+
+        // Wait for layout so we can get actual height
+        mNestedScrollView.post( new Runnable() {
+            @Override
+            public void run() {
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mNestedScrollView.getLayoutParams();
+                int appBarHeight = DimensionUtils.getStatusBarHeight( mNestedScrollView.getContext() ) + DimensionUtils.getToolbarHeight( mNestedScrollView.getContext() );
+                int peekHeight = DimensionUtils.getPeekHeight( mNestedScrollView.getContext() );
+                int extraOffsetForExpanded = peekHeight - appBarHeight;
+                params.height = mNestedScrollView.getHeight() + extraOffsetForExpanded;
+                mNestedScrollView.setLayoutParams( params );
+            }
+        } );
     }
 
     private void setDelegatingMergedToolbarParameters() {
         View mergedAppBar = mInflatedView.findViewById( R.id.delegating_merged_appbarlayout );
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mergedAppBar.getLayoutParams();
+        //params.height = DimensionUtils.getStatusBarHeight( mergedAppBar.getContext() ) + DimensionUtils.getToolbarHeight( mergedAppBar.getContext() );
         DelegatingMergedAppBarLayoutBehavior behavior = (DelegatingMergedAppBarLayoutBehavior) params.getBehavior();
         behavior.setToolbarTop( DimensionUtils.getStatusBarHeight( mergedAppBar.getContext() ) );
-        behavior.setToolbarBottom( DimensionUtils.getPeekHeight( mergedAppBar.getContext() ) ); //.getStatusBarHeight( mergedAppBar.getContext() ) + DimensionUtils.getToolbarHeight( mergedAppBar.getContext() ) );
+        behavior.setToolbarBottom( DimensionUtils.getStatusBarHeight( mergedAppBar.getContext() ) + DimensionUtils.getToolbarHeight( mergedAppBar.getContext() ) );
         behavior.setParentBottomSheetPage( this );
+        //mergedAppBar.setLayoutParams( params ); // force layout for new height to take effect
     }
 
     private void setDelegatingScrollToolbarParameters() {

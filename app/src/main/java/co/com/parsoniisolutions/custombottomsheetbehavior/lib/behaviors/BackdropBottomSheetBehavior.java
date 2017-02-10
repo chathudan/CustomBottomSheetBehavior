@@ -13,6 +13,7 @@ import android.view.View;
 import java.lang.ref.WeakReference;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetPosition;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 
 /**
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,14 +83,15 @@ public class BackdropBottomSheetBehavior<V extends View> extends CoordinatorLayo
         if ( mBottomSheetBehaviorRef == null || mBottomSheetBehaviorRef.get() == null)
             getBottomSheetBehavior(parent);
 
-
-        int peekHeight = mBottomSheetBehaviorRef.get().getPeekHeight();
+        int peekHeight = DimensionUtils.getPeekHeight( dependency.getContext() );
+        int appBarHeight = DimensionUtils.getStatusBarHeight( dependency.getContext() ) + DimensionUtils.getToolbarHeight( dependency.getContext() );
+        int extraOffsetForExpanded = peekHeight - appBarHeight;
 
         /**
          * mCollapsedY: Y position in where backdrop get hidden behind dependency.
          * {@link BottomSheetBehaviorGoogleMapsLike#getPeekHeight()} and collapsedY are the same point on screen.
          */
-        int collapsedY = dependency.getHeight() - peekHeight;
+        int collapsedY = dependency.getHeight() - extraOffsetForExpanded - peekHeight;
         /**
          * anchorPointY: with top being Y=0, anchorPointY defines the point in Y where could
          * happen 2 things:
@@ -104,7 +106,7 @@ public class BackdropBottomSheetBehavior<V extends View> extends CoordinatorLayo
          */
         int lastCurrentChildY = mCurrentChildY;
 
-        mCurrentChildY = (int) ((dependency.getY()-anchorPointY) * collapsedY / (collapsedY-anchorPointY));
+        mCurrentChildY = (int) ((dependency.getY() - anchorPointY) * collapsedY / (collapsedY-anchorPointY));
         if ( mCurrentChildY <= 0 ) {
             mCurrentChildY = 0;
         }
