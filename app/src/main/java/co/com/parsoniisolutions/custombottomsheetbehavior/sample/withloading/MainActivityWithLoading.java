@@ -83,7 +83,7 @@ public class MainActivityWithLoading extends AppCompatActivity {
                         public void run() {
                             mApi.setBottomSheetState( STATE_COLLAPSED );
                         }
-                    }, 100 );
+                    }, 50 );
                     return true;
                 }
                 else

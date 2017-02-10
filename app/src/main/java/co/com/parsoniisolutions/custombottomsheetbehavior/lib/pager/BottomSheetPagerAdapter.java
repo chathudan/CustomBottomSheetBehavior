@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 
@@ -65,9 +67,13 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
 
     public abstract BottomSheetPage createNewPage( LayoutInflater inflater );
 
-    public SparseArray<View> allViews() {
+    public SparseArray<View> allActiveViews() {
         return positionToViewMap;
     }
+    public Collection<Reference<BottomSheetPage>> allCachedViews() {
+        return mBottomSheetPageCache.peekAtCache();
+    }
+
 
 /*
     private Vector<BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback> mBottomSheetStateCallbacks;

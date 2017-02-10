@@ -19,6 +19,8 @@ import org.greenrobot.eventbus.EventBusException;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.lang.ref.Reference;
+
 
 public class BottomSheetViewPager extends ViewPager {
 
@@ -45,7 +47,14 @@ public class BottomSheetViewPager extends ViewPager {
         @Override
         public void onPageScrolled( int position, float positionOffset, int positionOffsetPixels ) { }
         @Override
-        public void onPageSelected( int position ) { EventBus.getDefault().post( new EventViewPagerPageSelected( position ) ); }
+        public void onPageSelected( int position ) {
+            // Since a user can fling adjacent page vertically during a horizontal swipe, set all other pages to the target
+            // when we settle on the currently selected page
+            mirrorBottomSheetStates( mTargetBottomSheetState, position );
+            mirrorBottomSheetStatesCached( mTargetBottomSheetState );
+
+            EventBus.getDefault().post( new EventViewPagerPageSelected( position ) );
+        }
         @Override
         public void onPageScrollStateChanged( int state ) { EventBus.getDefault().post( new EventViewPagerScrollStateChanged( state ) );}
     };
@@ -174,6 +183,54 @@ public class BottomSheetViewPager extends ViewPager {
         // Do not mirror transient states like SETTLING and DRAGGING
         if ( BottomSheetBehaviorGoogleMapsLike.isStateStable( ev.state() ) ) {
             mirrorBottomSheetStates( ev.state(), ev.bottomSheetPageRef() != null ? ev.bottomSheetPageRef().get() : null );
+            mirrorBottomSheetStatesCached( ev.state() );
+        }
+    }
+
+    private void mirrorBottomSheetStates( int newState, int sourcePosition ) {
+        // Iterate over all instantiated views, skip the source bottomsheepage when mirroring
+        BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
+
+        // We need to be mirroring not only pages currently in use, but also pages not in use sitting in the softcache,
+        // So they are ready in correct state for quick reuse
+        for ( int i = 0, size = adp.allActiveViews().size(); i < size; ++i ) {
+            int position = adp.allActiveViews().keyAt( i );
+            View view = adp.allActiveViews().valueAt( i );
+            BottomSheetPage bsp = (BottomSheetPage) view.getTag( R.id.BOTTOM_SHEET_PAGE );
+            if ( bsp == null )
+                continue;
+            if ( position == sourcePosition ) {
+                continue;
+            }
+
+            if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
+                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||
+                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED     ||
+                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN )
+               )
+                continue;
+
+            bsp.setBottomSheetState( newState, true );
+        }
+    }
+
+    private void mirrorBottomSheetStatesCached( int newState ) {
+        BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
+
+        for ( Reference<BottomSheetPage> ref : adp.allCachedViews() ) {
+            BottomSheetPage page = ref.get();
+            if ( page == null ) {
+                continue;
+            }
+
+            if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
+                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||
+                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED     ||
+                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN )
+               )
+                continue;
+
+            page.setBottomSheetState( newState, true );
         }
     }
 
@@ -181,8 +238,8 @@ public class BottomSheetViewPager extends ViewPager {
         // Iterate over all instantiated views, skip the source bottomsheepage when mirroring
         BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
 
-        for ( int i = 0, size = adp.allViews().size(); i < size; ++i ) {
-            View view = adp.allViews().valueAt( i );
+        for ( int i = 0, size = adp.allActiveViews().size(); i < size; ++i ) {
+            View view = adp.allActiveViews().valueAt( i );
             BottomSheetPage bsp = (BottomSheetPage) view.getTag( R.id.BOTTOM_SHEET_PAGE );
             if ( bsp == null )
                 continue;

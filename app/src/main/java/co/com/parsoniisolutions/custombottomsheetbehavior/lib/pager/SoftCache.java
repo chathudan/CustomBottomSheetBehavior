@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.util.Collection;
 import java.util.Stack;
 
 
@@ -20,6 +21,10 @@ public abstract class SoftCache<T> {
 
     /* implement this to create new object of type T if cache is empty */
     public abstract T runWhenCacheEmpty( LayoutInflater inflater, BottomSheetPagerAdapter pagerAdapter );
+
+    public Collection<Reference<T>> peekAtCache() {
+        return mRecyclingStack;
+    }
 
     /*
      * retrieves last item from cache, or creates a new T object if cache is empty

@@ -91,7 +91,7 @@ public class BottomSheetPageCheeseWithLoading extends BottomSheetPageWithLoading
             protected BottomSheetDataWithLoading doInBackground( Void... params ) {
                 // Simulate a longer loading time
                 try {
-                    Thread.sleep( 500 );
+                    Thread.sleep( 0 );
                 } catch ( InterruptedException e ) { }
 
                 if ( adp == null )

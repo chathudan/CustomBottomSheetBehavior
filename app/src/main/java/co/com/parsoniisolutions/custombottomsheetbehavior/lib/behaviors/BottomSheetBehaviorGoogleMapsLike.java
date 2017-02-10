@@ -14,7 +14,6 @@ import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.CustomViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -262,10 +261,11 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         switch ( action ) {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                mEventCancelled = true;
                 mTouchingScrollingChild = false;
                 mActivePointerId = MotionEvent.INVALID_POINTER_ID;
                 // Reset the ignore flag
-                if (mIgnoreEvents) {
+                if ( mIgnoreEvents ) {
                     mIgnoreEvents = false;
                     return false;
                 }
@@ -290,10 +290,10 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                 break;
         }
 
-        if ( action == MotionEvent.ACTION_CANCEL ) {
+        //if ( action == MotionEvent.ACTION_CANCEL ) {
             // Also, we don't want to trigger a BottomSheet click as a result of cancel
-            mEventCancelled = true;
-        }
+            //mEventCancelled = true;
+        //}
 
         if ( ! mIgnoreEvents  &&  mViewDragHelper.shouldInterceptTouchEvent( event ) ) {
             return true;
@@ -308,9 +308,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                         mState != STATE_DRAGGING &&
                         ! parent.isPointInChildBounds(scroll, (int) event.getX(), (int) event.getY()) &&
                         Math.abs(mInitialY - event.getY()) > mViewDragHelper.getTouchSlop();
-        if ( ret == true ) {
-            Log.e("e","intercepting");
-        }
         return ret;
     }
 
@@ -343,10 +340,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             }
         }
 
-        if ( ! mIgnoreEvents ) {
-            Log.e("e","not ignoring!");
-        }
-
         return ! mIgnoreEvents;
     }
 
@@ -369,7 +362,6 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         int newTop     = currentTop - dy;
 
         // Force-stop at the anchor - do not go from collapsed to expanded in one scroll
-
         if (
                 ( mLastStableState == STATE_COLLAPSED  &&  newTop < mAnchorPoint )  ||
                 ( mLastStableState == STATE_EXPANDED   &&  newTop > mAnchorPoint )
@@ -675,12 +667,21 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
     /**
      * Sets the state of the bottom sheet. The bottom sheet will transition to that state with or without
-     * animation, and callbacks on registered listeners will or will not be called, depending on noCallbacksNoAnim paramter.
+     * animation, and callbacks on registered listeners will or will not be called, depending on noCallbacksNoAnim parameter.
      *
      * @param state One of {@link #STATE_COLLAPSED}, {@link #STATE_ANCHOR_POINT},
      *              {@link #STATE_EXPANDED} or {@link #STATE_HIDDEN}.
      */
     public final void setState( @State int state, boolean noCallbacksNoAnim ) {
+        if ( mState == STATE_SETTLING  &&  state == mSettlingToState ) {
+            // Nothing to do, we will settle to this state shortly
+            return;
+        }
+        else
+        if ( mState == STATE_DRAGGING ) {
+            // What to do?
+        }
+        else
         if ( state == mState ) {
             return;
         }
