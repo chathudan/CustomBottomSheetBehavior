@@ -165,7 +165,7 @@ public class BottomSheetViewPager extends ViewPager {
     }
 
     private void mirrorBottomSheetStates( int newState, BottomSheetPage sourcePage ) {
-        // Iterate over all instantiated views
+        // Iterate over all instantiated views, skip the source bottomsheepage when mirroring
         BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
 
         for ( int i = 0, size = adp.allViews().size(); i < size; ++i ) {
@@ -173,9 +173,9 @@ public class BottomSheetViewPager extends ViewPager {
             BottomSheetPage bsp = (BottomSheetPage) view.getTag( R.id.BOTTOM_SHEET_PAGE );
             if ( bsp == null )
                 continue;
-            //if ( bsp.equals( sourcePage ) ) {
-            //    continue;
-            //}
+            if ( bsp.equals( sourcePage ) ) {
+                continue;
+            }
 
             if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
                    newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||

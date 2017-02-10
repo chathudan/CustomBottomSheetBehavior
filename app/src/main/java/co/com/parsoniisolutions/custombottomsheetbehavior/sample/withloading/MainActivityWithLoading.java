@@ -32,6 +32,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT;
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
 import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetDataWithLoading.LocationType.POINT;
 
 
@@ -39,6 +41,8 @@ import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withl
  * More advanced demo with async loading and coordination with map
  */
 public class MainActivityWithLoading extends AppCompatActivity {
+
+    private API mApi;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -72,7 +76,7 @@ public class MainActivityWithLoading extends AppCompatActivity {
         /**
          * Set up the Map Toolbar
          */
-        Toolbar scroll_toolbar = (Toolbar) findViewById( R.id.scrolltoolbar );
+        final Toolbar scroll_toolbar = (Toolbar) findViewById( R.id.scrolltoolbar );
         scroll_toolbar.setTitle( "" );
         scroll_toolbar.inflateMenu( R.menu.scroll );
         scroll_toolbar.setOnMenuItemClickListener( new Toolbar.OnMenuItemClickListener() {
@@ -80,6 +84,13 @@ public class MainActivityWithLoading extends AppCompatActivity {
             public boolean onMenuItemClick( MenuItem item ) {
                 if ( item.getItemId() == R.id.action_search ) {
                     Toast.makeText( getApplicationContext(), "Clicked search", Toast.LENGTH_LONG ).show();
+                    mApi.setBottomSheetState( STATE_ANCHOR_POINT );
+                    scroll_toolbar.postDelayed( new Runnable() {
+                        @Override
+                        public void run() {
+                            mApi.setBottomSheetState( STATE_COLLAPSED );
+                        }
+                    }, 100 );
                     return true;
                 }
                 else
@@ -126,13 +137,13 @@ public class MainActivityWithLoading extends AppCompatActivity {
         /**
          * Get an API for interacting with the map+bottomsheet viewpager combo
          */
-        API api = new API( mapView, bottomSheetViewPager );
+        mApi = new API( mapView, bottomSheetViewPager );
 
 
         /**
          * Listen for selections
          */
-        api.addOnSelectedListener(
+        mApi.addOnSelectedListener(
                 new API.OnSelectedListener() {
                     @Override
                     public void onSelected( long id ) {

@@ -48,6 +48,12 @@ public class API implements APIif {
         }
     }
 
+    public void setBottomSheetState( int state ) {
+        if ( mViewPagerRef != null  &&  mViewPagerRef.get() != null ) {
+            mViewPagerRef.get().setBottomSheetState( state, false );
+        }
+    }
+
     public interface OnSelectedListener {
         void onSelected( long id );
     }
