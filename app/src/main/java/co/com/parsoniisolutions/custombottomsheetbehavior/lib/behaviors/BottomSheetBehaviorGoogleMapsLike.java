@@ -1,5 +1,7 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
@@ -10,8 +12,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView;
-
 import android.support.v4.widget.CustomViewDragHelper;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -20,13 +20,16 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
+import co.com.parsoniisolutions.custombottomsheetbehavior.R;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPage;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetState;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.scrolltracking.ScrollTrackingBehavior;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.SlopSupportingNestedScrollView;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
-
-import co.com.parsoniisolutions.custombottomsheetbehavior.R;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.scrolltracking.ScrollTrackingBehavior;
 
 
 public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTrackingBehavior<V> {
@@ -735,7 +738,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             }
         }
         else {
-            setStateInternal( STATE_SETTLING );
+            setStateInternal( STATE_SETTLING, noCallbacksNoAnim );
             mSettlingToState = state;
             if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top, 1 ) ) {
                 ViewCompat.postOnAnimation( child, new SettleRunnable( child, state, noCallbacksNoAnim ) );
@@ -772,6 +775,10 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             return;
         }
 
+        if ( ! noCallbacksNoAnim ) {
+            EventBus.getDefault().post( new EventBottomSheetState( state, mParentBottomSheetPage ) );
+        }
+
         mState = state;
         View bottomSheet = mViewRef.get();
         if ( mNestedScrollingChildRef.get() != null  &&  mNestedScrollingChildRef.get() instanceof SlopSupportingNestedScrollView ) {
@@ -793,9 +800,9 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         }
     }
 
-    private void notifyStateChangedToListeners(@NonNull View bottomSheet, @State int newState) {
-        for (BottomSheetCallback bottomSheetCallback:mCallback) {
-            bottomSheetCallback.onStateChanged(bottomSheet, newState);
+    private void notifyStateChangedToListeners( @NonNull View bottomSheet, @State int newState ) {
+        for ( BottomSheetCallback bottomSheetCallback : mCallback ) {
+            bottomSheetCallback.onStateChanged( bottomSheet, newState );
         }
     }
 
@@ -1073,6 +1080,11 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                     "The view is not associated with BottomSheetBehaviorGoogleMapsLike");
         }
         return (BottomSheetBehaviorGoogleMapsLike<V>) behavior;
+    }
+
+    private BottomSheetPage mParentBottomSheetPage = null;
+    public void setParentBottomSheetPage( BottomSheetPage bottomSheetPage ) {
+        mParentBottomSheetPage = bottomSheetPage;
     }
 
 }

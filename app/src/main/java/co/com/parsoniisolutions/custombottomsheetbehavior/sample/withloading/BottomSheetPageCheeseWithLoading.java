@@ -14,6 +14,7 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetPagerAdapter;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.BottomSheetData;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetPageWithLoading;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetPagerAdapterWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.BottomSheetViewPagerWithLoading;
 import co.com.parsoniisolutions.custombottomsheetbehavior.sample.PhotosPagerAdapter;
 
@@ -43,6 +44,13 @@ public class BottomSheetPageCheeseWithLoading extends BottomSheetPageWithLoading
     @Override
     public void setUI( BottomSheetData bottomSheetData ) {
         GeoCheeseData cheeseData = (GeoCheeseData) bottomSheetData;
+
+        // If we moved to a new page, skip setting the UI
+        BottomSheetPagerAdapterWithLoading adp = (BottomSheetPagerAdapterWithLoading) mViewPagerRef.get().getAdapter();
+        if ( adp != null  &&  adp.getIdAtPosition( mPosition ) != cheeseData.getId() )
+            return;
+
+
         mTitle.setText( cheeseData.getTitle() );
         mSubTitle.setText( cheeseData.getSubTitle() );
 

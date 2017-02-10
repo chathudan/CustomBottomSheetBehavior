@@ -177,11 +177,11 @@ public class MapViewWithLoading extends MapView {
         if ( mGoogleMap == null )
             return;
 
-        if ( ev.state() != STATE_HIDDEN ) {
-            mGoogleMap.getUiSettings().setZoomControlsEnabled( false );
+        if ( ev.state() == STATE_HIDDEN ) {
+            mGoogleMap.getUiSettings().setZoomControlsEnabled( true );
         }
         else {
-            mGoogleMap.getUiSettings().setZoomControlsEnabled( true );
+            mGoogleMap.getUiSettings().setZoomControlsEnabled( false );
         }
     }
 

@@ -1,7 +1,6 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager;
 
 import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSh
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingMergedAppBarLayoutBehavior;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.appbar.DelegatingScrollingAppBarLayoutBehavior;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.views.MergedFloatingActionButton;
 
 import java.lang.ref.WeakReference;
 
@@ -64,7 +62,7 @@ public class BottomSheetPage {
 
     protected void initializeUI() {
         mNestedScrollView = mInflatedView.findViewById( R.id.bottom_sheet );
-        setOnBottomSheetStateChangedListener();
+        setBottomSheetBehaviorParameters();
         setDelegatingMergedToolbarParameters();
         setDelegatingScrollToolbarParameters();
     }
@@ -76,25 +74,10 @@ public class BottomSheetPage {
      */
     public void onDestroy() { }
 
-    /**
-     * We need to observe the BottomSheet.
-     * When user triggers a BottomSheet state change, other BottomSheets in the PagerAdapter should reflect this as well.
-     */
-    private void setOnBottomSheetStateChangedListener() {
-        final BottomSheetPage bottomSheetPage = this;
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)mInflatedView.findViewById( R.id.bottom_sheet ).getLayoutParams();
-        BottomSheetBehaviorGoogleMapsLike behavior = (BottomSheetBehaviorGoogleMapsLike)params.getBehavior();
-        behavior.addBottomSheetCallback( new BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
-            @Override
-            public void onStateChanged( @NonNull View bottomSheet, @BottomSheetBehaviorGoogleMapsLike.State int newState ) {
-                if ( mViewPagerRef.get() != null ) {
-                    mViewPagerRef.get().callBottomSheetStateChanged( newState, bottomSheetPage );
-                }
-            }
-
-            @Override
-            public void onSlide( @NonNull View bottomSheet, float slideOffset ) { }
-        });
+    private void setBottomSheetBehaviorParameters() {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mNestedScrollView.getLayoutParams();
+        BottomSheetBehaviorGoogleMapsLike behavior = (BottomSheetBehaviorGoogleMapsLike) params.getBehavior();
+        behavior.setParentBottomSheetPage( this );
     }
 
     private void setDelegatingMergedToolbarParameters() {
@@ -116,6 +99,7 @@ public class BottomSheetPage {
     /**
      * Returns true if this BottomSheetPage is currently shown (selected) in the ViewPager
      */
+    // This doesn't work, because this page can be visible while position in adapter has changed
     public boolean isSelected() {
         if ( mViewPagerRef.get() == null ) {
             return false;
