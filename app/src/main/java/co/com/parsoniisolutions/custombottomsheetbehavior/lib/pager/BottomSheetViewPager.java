@@ -10,6 +10,7 @@ import android.view.View;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetPosition;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetState;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventViewPagerPageSelected;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventViewPagerScrollStateChanged;

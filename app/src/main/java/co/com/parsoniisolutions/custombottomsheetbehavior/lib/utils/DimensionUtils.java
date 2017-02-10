@@ -28,6 +28,14 @@ public class DimensionUtils {
         return mFabSize;
     }
 
+    private static int mAnchorHeight = -1;
+    public static int getAnchorHeight( Context context ) {
+        if ( mAnchorHeight== -1 ) {
+            mAnchorHeight = (int)context.getResources().getDimension( R.dimen.anchor_point );
+        }
+        return mAnchorHeight;
+    }
+
     private static int mPeekHeight = -1;
     public static int getPeekHeight( Context context ) {
         if ( mPeekHeight == -1 ) {

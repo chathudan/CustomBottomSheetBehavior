@@ -5,12 +5,17 @@ import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.View;
 
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetPosition;
+import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetState;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.utils.DimensionUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.EventBusException;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT;
+import static co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
 
 
 public class MergedFloatingActionButton extends FloatingActionButton {
@@ -28,6 +33,8 @@ public class MergedFloatingActionButton extends FloatingActionButton {
         setFabBehaviorParameters(); // This can only be set after the view is added to its parent
     }
 
+    int mFabYatCollapsed = -1;
+    int mFabYatAnchor    = -1;
     private void setFabBehaviorParameters() {
         // Wait until parent height is measured
         post( new Runnable() {
@@ -42,6 +49,9 @@ public class MergedFloatingActionButton extends FloatingActionButton {
 
                 setHidePositionBottom( parentHeight - peekHeight + fabSize/2 );
                 updateVisibility();
+
+                mFabYatCollapsed = parentHeight - peekHeight - fabSize/2;
+                mFabYatAnchor = DimensionUtils.getAnchorHeight( getContext() ) - fabSize/2;
             }
         } );
     }
@@ -83,6 +93,25 @@ public class MergedFloatingActionButton extends FloatingActionButton {
             return;
 
         updateVisibility();
+    }
+
+    @Subscribe( sticky = true, threadMode = ThreadMode.MAIN )
+    public void onEvent( EventBottomSheetState ev ) {
+        if ( BottomSheetBehaviorGoogleMapsLike.isStateStable( ev.state() ) ) {
+            if ( ev.state() == STATE_COLLAPSED ) {
+                if ( mFabYatCollapsed > 0 ) {
+                    setY( mFabYatCollapsed );
+                    updateVisibility();
+                }
+            }
+            else
+            if ( ev.state() == STATE_ANCHOR_POINT ) {
+                if ( mFabYatAnchor > 0 ) {
+                    setY( mFabYatAnchor );
+                    updateVisibility();
+                }
+            }
+        }
     }
 
     private void updateVisibility() {

@@ -99,14 +99,14 @@ public class BottomSheetPage {
     /**
      * Returns true if this BottomSheetPage is currently shown (selected) in the ViewPager
      */
-    // This doesn't work, because this page can be visible while position in adapter has changed
+    // This doesn't always work, because this page can be visible while position in adapter has changed
+    // As a workaround, we will refresh FAB horizontal position when state changes
     public boolean isSelected() {
         if ( mViewPagerRef.get() == null ) {
             return false;
         }
         return mViewPagerRef.get().getCurrentItem() == mPosition;
     }
-
     protected BottomSheetData getBottomSheetData( int position ) {
         throw new UnsupportedOperationException( "You must subclass BottomSheetPage and override getBottomSheetData()" );
     }
