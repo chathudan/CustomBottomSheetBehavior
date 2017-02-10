@@ -1,6 +1,7 @@
 package co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewPager;
@@ -10,7 +11,6 @@ import android.view.View;
 
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.behaviors.BottomSheetBehaviorGoogleMapsLike;
-import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetPosition;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventBottomSheetState;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventViewPagerPageSelected;
 import co.com.parsoniisolutions.custombottomsheetbehavior.lib.pager.withloading.EventViewPagerScrollStateChanged;
@@ -26,6 +26,19 @@ public class BottomSheetViewPager extends ViewPager {
     public BottomSheetViewPager( Context context, AttributeSet attrs ) {
         super( context, attrs );
         init();
+    }
+
+    /**
+     * Since we cache mTopOfCollapsedSheetY, we need to update it if Configuration changes
+     * @param configuration
+     */
+    @Override
+    public void onConfigurationChanged( Configuration configuration ) {
+        super.onConfigurationChanged( configuration );
+
+        int peekHeight   = (int)getContext().getResources().getDimension( R.dimen.bottom_sheet_peek_height );
+        int screenHeight = (int)(configuration.screenHeightDp * getContext().getResources().getDisplayMetrics().density);
+        mTopOfCollapsedSheetY = screenHeight - peekHeight;
     }
 
     private OnPageChangeListener mOnPageChangeListener = new OnPageChangeListener() {

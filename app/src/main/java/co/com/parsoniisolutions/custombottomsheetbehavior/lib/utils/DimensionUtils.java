@@ -9,6 +9,9 @@ import android.util.TypedValue;
 import co.com.parsoniisolutions.custombottomsheetbehavior.R;
 
 
+/**
+ * These are static values, and do not change upon orientation change, so we can keep them around for efficiency.
+ */
 public class DimensionUtils {
 
     private static int mMergedToolbarHideThreshold = -1;

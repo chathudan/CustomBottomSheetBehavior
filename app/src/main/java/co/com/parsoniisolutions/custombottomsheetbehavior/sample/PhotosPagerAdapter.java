@@ -38,13 +38,13 @@ public class PhotosPagerAdapter extends android.support.v4.view.PagerAdapter {
     public Object instantiateItem( ViewGroup container, int position ) {
         View itemView = mLayoutInflater.inflate(R.layout.photo_pager_item, container, false);
         ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
-        imageView.setImageResource( mItems.get( position ) );
-/*
+        //imageView.setImageResource( mItems.get( position ) );
+
         Glide.with( container.getContext() )
                 .load( mItems.get( position ) )
                 .placeholder( R.drawable.cheese_loading )
                 .into( imageView );
-*/
+
         container.addView( itemView );
         return itemView;
     }

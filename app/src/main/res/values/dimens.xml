@@ -5,7 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="fab_size">56dp</dimen>
     <dimen name="fab_size_half">28dp</dimen>
-    <dimen name="anchor_point">300dp</dimen>
+    <dimen name="anchor_point">240dp</dimen>
     <dimen name="bottom_sheet_peek_height">88dp</dimen>
     <dimen name="bottom_sheet_shadow_height">10dp</dimen>    <!-- The height of the shadow above the bottom sheet -->
     <dimen name="high_touch_slop">60dp</dimen>               <!-- The amount of touch slop when the bottom sheet is collapsed or at anchor state -->

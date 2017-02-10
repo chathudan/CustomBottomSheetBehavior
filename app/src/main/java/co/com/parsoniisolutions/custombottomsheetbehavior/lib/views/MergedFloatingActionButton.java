@@ -95,6 +95,7 @@ public class MergedFloatingActionButton extends FloatingActionButton {
         updateVisibility();
     }
 
+/*
     @Subscribe( sticky = true, threadMode = ThreadMode.MAIN )
     public void onEvent( EventBottomSheetState ev ) {
         if ( BottomSheetBehaviorGoogleMapsLike.isStateStable( ev.state() ) ) {
@@ -113,7 +114,7 @@ public class MergedFloatingActionButton extends FloatingActionButton {
             }
         }
     }
-
+*/
     private void updateVisibility() {
         if ( getY() < hidePositionTop  ||  getY() > hidePositionBottom ) {
             hide();
