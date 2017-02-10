@@ -36,7 +36,7 @@ public abstract class BottomSheetPagerAdapter extends PagerAdapter {
         container.addView( inflatedView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT );
 
         bottomSheetPage.setNewAdapterPosition( position );
-        bottomSheetPage.setBottomSheetState( mViewPagerRef.get().bottomSheetState(), true );
+        bottomSheetPage.setBottomSheetState( mViewPagerRef.get().targetBottomSheetState(), true );
 
         positionToViewMap.put( position, inflatedView );
         return inflatedView;

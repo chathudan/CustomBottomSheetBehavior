@@ -394,11 +394,11 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             if ( newTop < mMinOffset ) {
                 consumed[1] = currentTop - mMinOffset;
                 ViewCompat.offsetTopAndBottom( child, -consumed[1] );
-                setStateInternal( STATE_EXPANDED );
+                setStateInternal( STATE_EXPANDED, STATE_EXPANDED );
             } else {
                 consumed[1] = dy;
                 ViewCompat.offsetTopAndBottom( child, -dy );
-                setStateInternal( STATE_DRAGGING );
+                setStateInternal( STATE_DRAGGING, STATE_DRAGGING );
             }
         }
         else
@@ -407,11 +407,11 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
                 if ( newTop <= mMaxOffset || mHideable ) {
                     consumed[1] = dy;
                     ViewCompat.offsetTopAndBottom( child, -dy );
-                    setStateInternal( STATE_DRAGGING );
+                    setStateInternal( STATE_DRAGGING, STATE_DRAGGING );
                 } else {
                     consumed[1] = currentTop - mMaxOffset;
                     ViewCompat.offsetTopAndBottom( child, -consumed[1] );
-                    setStateInternal (STATE_COLLAPSED );
+                    setStateInternal( STATE_COLLAPSED, STATE_COLLAPSED );
                 }
             }
         }
@@ -423,7 +423,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
     public void onStopNestedScroll( CoordinatorLayout coordinatorLayout, V child, View target ) {
 
         if ( child.getTop() == mMinOffset ) {
-            setStateInternal( STATE_EXPANDED );
+            setStateInternal( STATE_EXPANDED, STATE_EXPANDED );
             mLastStableState = STATE_EXPANDED;
             return;
         }
@@ -575,11 +575,11 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         }
 
         if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top ) ) {
-            setStateInternal( STATE_SETTLING );
+            setStateInternal( STATE_SETTLING, targetState );
             mSettlingToState = targetState;
             ViewCompat.postOnAnimation( child, new SettleRunnable( child, targetState, false ) );
         } else {
-            setStateInternal( targetState );
+            setStateInternal( targetState, targetState );
         }
 
         mNestedScrolled = false;
@@ -687,7 +687,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
         if ( mViewRef == null ) {
             // The view is not laid out yet; modify mState and let onLayoutChild handle it later
-            if ( state == STATE_COLLAPSED  ||  state == STATE_EXPANDED  ||  state == STATE_ANCHOR_POINT  ||  state == STATE_HIDDEN ) {
+            if ( isStateStable( state ) ) {
                 if ( ! mHideable  &&  state == STATE_HIDDEN ) {
                     state = STATE_COLLAPSED;
                 }
@@ -697,6 +697,10 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 
                 mState = state;
                 mLastStableState = state;
+            }
+
+            if ( ! noCallbacksNoAnim ) {
+                EventBus.getDefault().post( new EventBottomSheetState( state, state, mParentBottomSheetPage ) );
             }
             return;
         }
@@ -731,16 +735,16 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         //else {
 
         if ( ! noCallbacksNoAnim ) {
-            setStateInternal( STATE_SETTLING );
+            setStateInternal( STATE_SETTLING, state );
             mSettlingToState = state;
             if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top ) ) {
                 ViewCompat.postOnAnimation( child, new SettleRunnable( child, state, noCallbacksNoAnim ) );
             }
         }
         else {
-            setStateInternal( STATE_SETTLING, noCallbacksNoAnim );
+            setStateInternal( STATE_SETTLING, state, noCallbacksNoAnim );
             mSettlingToState = state;
-            if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top, 1 ) ) {
+            if ( mViewDragHelper.smoothSlideViewTo( child, child.getLeft(), top, 0 ) ) {
                 ViewCompat.postOnAnimation( child, new SettleRunnable( child, state, noCallbacksNoAnim ) );
             }
         }
@@ -767,16 +771,17 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         return mLastStableState;
     }
 
-    private void setStateInternal( @State int state ) {
-        setStateInternal( state, false );
+    private void setStateInternal( @State int state, @State int targetState ) {
+        setStateInternal( state, targetState, false );
     }
-    private void setStateInternal( @State int state, boolean noCallbacksNoAnim ) {
+
+    private void setStateInternal( @State int state, @State int targetState, boolean noCallbacksNoAnim ) {
         if ( mState == state ) {
             return;
         }
 
         if ( ! noCallbacksNoAnim ) {
-            EventBus.getDefault().post( new EventBottomSheetState( state, mParentBottomSheetPage ) );
+            EventBus.getDefault().post( new EventBottomSheetState( state, targetState, mParentBottomSheetPage ) );
         }
 
         mState = state;
@@ -791,7 +796,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             }
         }
 
-        if ( state == STATE_HIDDEN  ||  state == STATE_COLLAPSED  ||  state == STATE_ANCHOR_POINT  ||  state == STATE_EXPANDED ) {
+        if ( isStateStable( state ) ) {
             mLastStableState = state;
 
             if ( bottomSheet != null  &&  mCallback != null  &&  ! noCallbacksNoAnim ) {
@@ -870,7 +875,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
         @Override
         public void onViewDragStateChanged( int state ) {
             if ( state == CustomViewDragHelper.STATE_DRAGGING ) {
-                setStateInternal( STATE_DRAGGING );
+                setStateInternal( STATE_DRAGGING, STATE_DRAGGING );
             }
         }
 
@@ -948,22 +953,12 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
 */
 
             if ( mViewDragHelper.smoothSlideViewTo( releasedChild, releasedChild.getLeft(), top ) ) {
-                setStateInternal( STATE_SETTLING );
+                setStateInternal( STATE_SETTLING, targetState );
                 mSettlingToState = targetState;
                 ViewCompat.postOnAnimation( releasedChild, new SettleRunnable( releasedChild, targetState, false ) );
             } else {
-                setStateInternal( targetState );
+                setStateInternal( targetState, targetState );
             }
-/*
-          if ( mViewDragHelper.settleCapturedViewAt( releasedChild.getLeft(), top ) ) {
-                setStateInternal( STATE_SETTLING );
-                mSettlingToState = targetState;
-                ViewCompat.postOnAnimation( releasedChild, new SettleRunnable( releasedChild, targetState, false ) );
-            }
-            else {
-                setStateInternal( targetState );
-            }
-*/
         }
 
         @Override
@@ -1016,7 +1011,7 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
             if ( mViewDragHelper != null  &&  mViewDragHelper.continueSettling( true ) ) {
                 ViewCompat.postOnAnimation( mView, this );
             } else {
-                setStateInternal( mTargetState, mNoCallbacks );
+                setStateInternal( mTargetState, mTargetState, mNoCallbacks );
                 mNestedScrollingChildRef.get().scrollTo( 0, 0 );
             }
             if ( mNestedScrollingChildRef.get() != null ) {
@@ -1085,6 +1080,10 @@ public class BottomSheetBehaviorGoogleMapsLike<V extends View> extends ScrollTra
     private BottomSheetPage mParentBottomSheetPage = null;
     public void setParentBottomSheetPage( BottomSheetPage bottomSheetPage ) {
         mParentBottomSheetPage = bottomSheetPage;
+    }
+
+    public static boolean isStateStable( int state ) {
+        return state == STATE_HIDDEN  ||  state == STATE_COLLAPSED  ||  state == STATE_ANCHOR_POINT  ||  state == STATE_EXPANDED;
     }
 
 }

@@ -162,7 +162,7 @@ public class MapViewWithLoading extends MapView {
     }
 
     private void collapseBottomSheetIfHidden() {
-        if ( mBottomSheetViewPagerWithLoading.bottomSheetState() == STATE_HIDDEN ) {
+        if ( mBottomSheetViewPagerWithLoading.targetBottomSheetState() == STATE_HIDDEN ) {
             mBottomSheetViewPagerWithLoading.setBottomSheetState( STATE_COLLAPSED, false );
         }
     }

@@ -101,9 +101,19 @@ public class BottomSheetViewPager extends ViewPager {
         }
     }
 
-    private int mBottomSheetState = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
+    /**
+     * Current state, which might include STATE_DRAGGING and STATE_SETTLING
+     */
+    private int mBottomSheetState       = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
+
+    /**
+     * The current stable state, or of STATE_DRAGGING then the last stable state, or if STATE_SETTLING then the state settling TO
+     */
+    private int mTargetBottomSheetState = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED;
+
     public void setBottomSheetState( int state, boolean noanim ) {
         mBottomSheetState = state;
+        mTargetBottomSheetState = state;
 
         //EventBus.getDefault().post( new EventBottomSheetState( state ) );
 
@@ -114,12 +124,10 @@ public class BottomSheetViewPager extends ViewPager {
     }
 
     public int bottomSheetState() {
-        BottomSheetPage bottomSheetPage = selectedBottomSheetPage();
-        if ( bottomSheetPage != null ) {
-            return bottomSheetPage.getBottomSheetState();
-        }
-
         return mBottomSheetState;
+    }
+    public int targetBottomSheetState() {
+        return mTargetBottomSheetState;
     }
 
     private @Nullable BottomSheetPage selectedBottomSheetPage() {
@@ -132,11 +140,27 @@ public class BottomSheetViewPager extends ViewPager {
     public void onEvent( EventViewPagerPageSelected ev ) {
     }
 
+
     // Only the page the user is interacting with will broadcast this event
     @Subscribe( sticky = false, threadMode = ThreadMode.MAIN )
     public void onEvent( EventBottomSheetState ev ) {
         mBottomSheetState = ev.state();
-        mirrorBottomSheetStates( ev.state(), ev.bottomSheetPageRef() != null ? ev.bottomSheetPageRef().get() : null );
+
+        if ( ev.state() == BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING ) {
+            mTargetBottomSheetState = ev.targetState();
+        }
+        else
+        if ( ev.state() == BottomSheetBehaviorGoogleMapsLike.STATE_DRAGGING ) {
+            // Stay at the last state
+        }
+        else {
+            mTargetBottomSheetState = ev.state();
+        }
+
+        // Do not mirror transient states like SETTLING and DRAGGING
+        if ( BottomSheetBehaviorGoogleMapsLike.isStateStable( ev.state() ) ) {
+            mirrorBottomSheetStates( ev.state(), ev.bottomSheetPageRef() != null ? ev.bottomSheetPageRef().get() : null );
+        }
     }
 
     private void mirrorBottomSheetStates( int newState, BottomSheetPage sourcePage ) {
@@ -162,34 +186,4 @@ public class BottomSheetViewPager extends ViewPager {
             bsp.setBottomSheetState( newState, true );
         }
     }
-/*
-    // The bottom sheet state of some pager item changed, either caused by user or by system
-    public void callBottomSheetStateChanged( int newState, BottomSheetPage bottomSheetPage ) {
-        mBottomSheetState = newState;
-
-        // Iterate over all instantiated views
-        BottomSheetPagerAdapter adp = (BottomSheetPagerAdapter) getAdapter();
-
-        for ( int i = 0, size = adp.allViews().size(); i < size; ++i ) {
-            View view = adp.allViews().valueAt( i );
-            BottomSheetPage bsp = (BottomSheetPage) view.getTag( R.id.BOTTOM_SHEET_PAGE );
-            if ( bsp == null )
-                continue;
-            if ( bsp.equals( bottomSheetPage ) ) {
-                //EventBus.getDefault().post( new EventBottomSheetState( newState ) );
-                continue;
-            }
-
-            if ( !(newState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED    ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED     ||
-                   newState == BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN )
-                    )
-                continue;
-
-
-            bsp.setBottomSheetState( newState, true );
-        }
-    }
-*/
 }
